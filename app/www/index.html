@@ -1,0 +1,3195 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<title>MSC Music</title>
+<meta name="description" content="Sanatçılar, menajerler, mekanlar, distribütörler ve markalar için müzik ekosistemi.">
+<meta name="theme-color" content="#4338CA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B0F19" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MSC Music">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+  html,body{background:#F8FAFC;}
+  @media (prefers-color-scheme: dark){ html,body{background:#0B0F19;} }
+  /* Native kabuk veya yüklenmiş PWA: cihaz çerçevesi yok, her ekran boyutunda tam ekran.
+     Tarayıcıda geniş ekranda çerçeveli önizleme görünmeye devam eder. */
+  @media (display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui){
+    body{display:block;margin:0;padding:0;}
+    .device{width:100%;height:100dvh;border-radius:0;border:none;box-shadow:none;}
+  }
+</style>
+</head>
+<body>
+<style>
+:root{
+  --bg:#F8FAFC; --surface:#FFFFFF; --surface-2:#F1F5F9;
+  --ink:#0F172A; --ink-soft:#334155; --muted:#64748B; --border:#E2E8F0;
+  --accent:#4338CA; --accent-ink:#FFFFFF;
+  --accent-soft:#EEF2FF;
+  --accent-soft:color-mix(in srgb, var(--accent) 13%, var(--surface));
+  /* durum renkleri WCAG AA (≥4.5:1) sağlayacak tonlarda */
+  --success:#047857; --success-soft:#D1FAE5;
+  --warning:#92400E; --warning-soft:#FEF3C7;
+  --critical:#B91C1C; --critical-soft:#FEE2E2;
+  --info:#1D4ED8; --info-soft:#DBEAFE;
+  --shadow:0 10px 25px -5px rgba(15,23,42,.08);
+  --sheet-shadow:0 -12px 40px rgba(15,23,42,.18);
+  --stage:#E2E8F0;
+  --font-ui:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B0F19; --surface:#111827; --surface-2:#1F2937;
+    --ink:#F9FAFB; --ink-soft:#D1D5DB; --muted:#9CA3AF; --border:#374151;
+    --accent:#6366F1; --accent-ink:#FFFFFF;
+    --accent-soft:#312E81;
+    --accent-soft:color-mix(in srgb, var(--accent) 26%, var(--surface));
+    --success:#34D399; --success-soft:#064E3B;
+    --warning:#FBBF24; --warning-soft:#78350F;
+    --critical:#FCA5A5; --critical-soft:#7F1D1D;
+    --info:#93C5FD; --info-soft:#1E3A8A;
+    --shadow:0 10px 25px -5px rgba(0,0,0,.5);
+    --sheet-shadow:0 -12px 40px rgba(0,0,0,.6);
+    --stage:#05070C;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B0F19; --surface:#111827; --surface-2:#1F2937;
+  --ink:#F9FAFB; --ink-soft:#D1D5DB; --muted:#9CA3AF; --border:#374151;
+  --accent:#6366F1; --accent-ink:#FFFFFF;
+  --accent-soft:#312E81;
+  --accent-soft:color-mix(in srgb, var(--accent) 26%, var(--surface));
+  --success:#34D399; --success-soft:#064E3B;
+  --warning:#FBBF24; --warning-soft:#78350F;
+  --critical:#FCA5A5; --critical-soft:#7F1D1D;
+  --info:#93C5FD; --info-soft:#1E3A8A;
+  --shadow:0 10px 25px -5px rgba(0,0,0,.5);
+  --sheet-shadow:0 -12px 40px rgba(0,0,0,.6);
+  --stage:#05070C;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;height:100%;}
+body{
+  background:var(--stage);color:var(--ink);font-family:var(--font-ui);
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;
+  -webkit-user-select:none;user-select:none;      /* uygulama hissi: metin seçilmez */
+}
+input,textarea,.post-text,.pro-bio,.cmt-text,.ad-body,.bubble{-webkit-user-select:text;user-select:text;}
+img{-webkit-user-drag:none;user-drag:none;}       /* sürükle-bırak jesti kaydırmayı bozmasın */
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;}}
+:focus{outline:none;}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px;}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit;}
+button,a,[role="button"],label,select{touch-action:manipulation;}   /* 300ms tap gecikmesi olmasın */
+h1,h2,h3{margin:0;font-weight:800;letter-spacing:-.02em;text-wrap:balance;}
+.num{font-variant-numeric:tabular-nums;}
+[hidden]{display:none!important;}
+*{scrollbar-width:none;}
+::-webkit-scrollbar{display:none;}
+
+.device{
+  position:relative;width:min(420px,100%);height:min(880px,100dvh);
+  background:var(--bg);border-radius:34px;border:1px solid var(--border);
+  box-shadow:0 30px 70px rgba(15,23,42,.28);overflow:hidden;display:flex;flex-direction:column;
+}
+@media (max-width:560px){
+  body{display:block;background:var(--bg);}
+  .device{width:100%;height:100dvh;border-radius:0;border:none;box-shadow:none;}
+}
+
+.screen{flex:1;display:flex;flex-direction:column;min-height:0;}
+.appbar{
+  flex:none;background:var(--surface);border-bottom:1px solid var(--border);
+  padding:calc(14px + env(safe-area-inset-top)) 18px 13px;display:flex;align-items:center;gap:12px;
+}
+.appbar h1{font-size:20px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.icon-btn{
+  width:44px;height:44px;flex:none;border-radius:50%;border:none;background:var(--surface-2);
+  color:var(--ink-soft);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:background-color .15s ease;
+}
+.icon-btn:active{background:var(--border);}
+.icon-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;}
+.scroll{
+  flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px 18px 26px;
+  overscroll-behavior:contain;contain:layout paint;
+  touch-action:pan-y;               /* yatay kaydırmayı biz yakalayalım */
+}
+.chat-body,.sheet,.sheet-scroll{overscroll-behavior:contain;}
+.chip-row,.opt-row,.story-strip,.pack-row{overscroll-behavior:contain;touch-action:pan-x;}
+.view{display:none;}
+.view.active{display:block;animation:slide .26s cubic-bezier(.22,.61,.36,1);}
+@keyframes slide{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.tabbar{
+  flex:none;display:grid;grid-template-columns:repeat(5,1fr);
+  background:var(--surface);border-top:1px solid var(--border);
+  padding:8px 6px calc(8px + env(safe-area-inset-bottom));
+}
+.tab{
+  border:none;background:none;cursor:pointer;padding:6px 2px 4px;position:relative;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  color:var(--muted);font-size:10.5px;font-weight:600;transition:color .15s ease;
+}
+.tab svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.8;}
+.tab[aria-current="page"]{color:var(--accent);}
+.tab[aria-current="page"] .tab-ico{background:var(--accent-soft);}
+.tab-ico{width:46px;height:29px;border-radius:999px;display:flex;align-items:center;justify-content:center;transition:background-color .18s ease;position:relative;}
+.tab-badge{
+  position:absolute;top:-2px;right:6px;min-width:17px;height:17px;padding:0 4px;
+  background:var(--critical);color:#fff;border-radius:999px;
+  font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--surface);
+}
+
+/* çerçeveler */
+.fr{position:relative;padding:4px;border-radius:50%;display:inline-flex;flex:none;contain:layout paint;}
+.fr::before{content:'';position:absolute;inset:0;border-radius:50%;}
+/* dönen çerçeveler kendi katmanında kalsın: ana iş parçacığında yeniden boyama olmaz */
+.fr-holo::before,.fr-ember::before,.fr-legend::before{will-change:transform;transform:translateZ(0);}
+.fr > *{position:relative;z-index:1;}
+.fr-none::before{display:none;}
+.fr-gold::before{background:conic-gradient(#FDE68A,#B45309,#FEF3C7,#92400E,#FDE68A);}
+.fr-neon::before{background:linear-gradient(135deg,#6366F1,#22D3EE);box-shadow:0 0 16px rgba(99,102,241,.6);}
+.fr-vinyl::before{background:repeating-radial-gradient(circle at 50% 50%,#111827 0 1.5px,#4B5563 1.5px 3px);}
+.fr-holo::before{background:conic-gradient(#F472B6,#FACC15,#4ADE80,#22D3EE,#818CF8,#F472B6);animation:spin 7s linear infinite;}
+.fr-fire::before{background:conic-gradient(#FB923C,#DC2626,#FBBF24,#EA580C,#FB923C);}
+.fr-aurora::before{background:conic-gradient(from 200deg,#34D399,#22D3EE,#818CF8,#34D399);}
+.fr-mint::before{background:linear-gradient(135deg,#34D399,#A7F3D0,#059669);}
+.fr-mono::before{background:linear-gradient(135deg,var(--ink),var(--muted));}
+.fr-cyber::before{background:repeating-conic-gradient(#22D3EE 0deg 12deg,#0F172A 12deg 24deg);}
+.fr-sakura::before{background:conic-gradient(#FBCFE8,#F472B6,#FDF2F8,#EC4899,#FBCFE8);}
+.fr-ice::before{background:conic-gradient(#E0F2FE,#38BDF8,#FFFFFF,#0EA5E9,#E0F2FE);box-shadow:0 0 14px rgba(56,189,248,.5);}
+.fr-ember::before{background:conic-gradient(#7C2D12,#F97316,#FDE68A,#DC2626,#7C2D12);animation:spin 11s linear infinite;}
+.fr-chrome::before{background:conic-gradient(#F8FAFC,#94A3B8,#F1F5F9,#475569,#E2E8F0,#94A3B8,#F8FAFC);}
+.fr-legend::before{background:conic-gradient(#FDE68A,#F59E0B,#FFFFFF,#B45309,#FDE68A);animation:spin 5s linear infinite;box-shadow:0 0 18px rgba(245,158,11,.55);}
+
+/* unvan */
+.title-pill{
+  display:inline-flex;align-items:center;gap:5px;margin-top:7px;
+  background:var(--accent-soft);color:var(--accent);
+  padding:5px 11px;border-radius:999px;font-size:11.5px;font-weight:800;letter-spacing:.01em;
+}
+.title-pill svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;}
+
+/* anahtar */
+.switch-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--border);}
+.switch-row:last-child{border-bottom:none;}
+.switch-row .lbl{font-size:14.5px;font-weight:600;}
+.switch-row .sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.switch{width:48px;height:28px;flex:none;border-radius:999px;border:none;background:var(--border);position:relative;cursor:pointer;transition:background-color .2s ease;}
+.switch::before{content:'';position:absolute;inset:-8px -4px;}   /* dokunma alanı 44px */
+.switch::after{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s cubic-bezier(.22,.61,.36,1);}
+.switch[aria-pressed="true"]{background:var(--accent);}
+.switch[aria-pressed="true"]::after{transform:translateX(20px);}
+
+/* tema paketi kartları */
+.pack-row{display:flex;gap:11px;overflow-x:auto;padding:0 20px 6px;margin:0 -20px;}
+.pack{flex:none;width:118px;border:2px solid var(--border);border-radius:16px;overflow:hidden;background:var(--surface);cursor:pointer;padding:0;text-align:left;}
+.pack[aria-pressed="true"]{border-color:var(--accent);}
+.pack .pv{height:52px;position:relative;}
+.pack .pv .fr{position:absolute;left:9px;bottom:-16px;}
+.pack .pv .av{width:34px;height:34px;font-size:11px;}
+.pack .pn{padding:22px 10px 11px;font-size:12px;font-weight:800;}
+.pack .pd{padding:0 10px 11px;font-size:10.5px;color:var(--muted);font-weight:600;margin-top:-8px;}
+
+/* yorumlar */
+.sheet-fixed{display:flex;flex-direction:column;height:74%;max-height:74%;padding-bottom:0;}
+.sheet-scroll{flex:1;overflow-y:auto;margin:0 -20px;padding:0 20px 12px;}
+.cmt{display:flex;gap:11px;padding:11px 0;border-bottom:1px solid var(--border);}
+.cmt:last-child{border-bottom:none;}
+.cmt .av{width:36px;height:36px;font-size:12px;}
+.cmt-body{flex:1;min-width:0;}
+.cmt-name{font-size:13px;font-weight:700;display:flex;align-items:center;gap:5px;}
+.cmt-text{font-size:13.5px;color:var(--ink-soft);line-height:1.5;margin-top:3px;}
+.cmt-time{font-size:11px;color:var(--muted);margin-top:4px;}
+.cmt-composer{flex:none;display:flex;gap:9px;padding:12px 0 calc(14px + env(safe-area-inset-bottom));border-top:1px solid var(--border);background:var(--surface);}
+.cmt-composer input{flex:1;background:var(--surface-2);border:1.5px solid transparent;border-radius:999px;padding:12px 16px;font-size:14px;}
+.cmt-composer input:focus{border-color:var(--accent);background:var(--surface);}
+
+/* fotoğraflar */
+.av{overflow:hidden;}
+.av img{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block;}
+.post-photo{
+  width:100%;display:block;border-radius:14px;margin-bottom:12px;
+  background:var(--surface-2);object-fit:cover;max-height:420px;cursor:pointer;
+}
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+.photo-tile{
+  position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;border:none;padding:0;
+  background:var(--surface-2);cursor:pointer;
+}
+.photo-tile img{width:100%;height:100%;object-fit:cover;display:block;}
+.photo-tile:active{transform:scale(.97);}
+.photo-add{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  border:1.5px dashed var(--border);background:var(--surface);color:var(--muted);
+  font-size:11px;font-weight:700;
+}
+.photo-add svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;}
+.photo-tile.skel{
+  background:linear-gradient(100deg,var(--surface-2) 30%,var(--border) 50%,var(--surface-2) 70%);
+  background-size:220% 100%;animation:shimmer 1.1s linear infinite;
+}
+@keyframes shimmer{from{background-position:120% 0;}to{background-position:-120% 0;}}
+.lightbox{position:absolute;inset:0;z-index:42;background:rgba(0,0,0,.94);display:none;align-items:center;justify-content:center;}
+.lightbox.open{display:flex;}
+.lightbox img{max-width:100%;max-height:100%;object-fit:contain;}
+.lb-close{position:absolute;top:calc(14px + env(safe-area-inset-top));right:16px;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:22px;line-height:1;width:44px;height:44px;border-radius:50%;cursor:pointer;}
+.pick-btn{
+  display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:13px;
+  border-radius:14px;border:1.5px dashed var(--border);background:var(--surface);
+  color:var(--ink-soft);font-weight:700;font-size:14px;cursor:pointer;
+}
+.pick-btn:active{background:var(--surface-2);}
+.pick-btn svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.9;}
+.pick-preview{position:relative;border-radius:14px;overflow:hidden;}
+.pick-preview img{width:100%;display:block;max-height:220px;object-fit:cover;}
+.pick-remove{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;border:none;background:rgba(0,0,0,.6);color:#fff;font-size:16px;cursor:pointer;}
+
+/* takipçi listesi */
+.person-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);}
+.person-row:last-child{border-bottom:none;}
+.person-row .av{width:44px;height:44px;font-size:13.5px;}
+.person-info{flex:1;min-width:0;}
+.person-name{font-size:14px;font-weight:700;display:flex;align-items:center;gap:5px;}
+.person-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.mini-btn{flex:none;border:1.5px solid var(--border);background:var(--surface);color:var(--ink);border-radius:10px;padding:8px 14px;min-height:44px;font-size:12.5px;font-weight:700;cursor:pointer;}
+.mini-btn.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
+.count-btn{background:none;border:none;padding:0;cursor:pointer;color:inherit;font:inherit;}
+.av{
+  border-radius:50%;background:var(--accent-soft);color:var(--accent);
+  display:flex;align-items:center;justify-content:center;font-weight:800;
+  border:2px solid var(--surface);
+}
+.fr-none > .av{border-color:transparent;}
+
+/* ---- story şeridi ---- */
+.story-strip{display:flex;gap:13px;overflow-x:auto;padding:0 18px 14px;margin:0 -18px 6px;}
+.story-btn{border:none;background:none;cursor:pointer;padding:0;flex:none;width:70px;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.story-ring{position:relative;padding:3px;border-radius:50%;display:inline-flex;}
+.story-ring::before{content:'';position:absolute;inset:0;border-radius:50%;background:conic-gradient(#F472B6,#FACC15,#4ADE80,#22D3EE,#818CF8,#F472B6);}
+.story-ring.seen::before{background:var(--border);}
+.story-ring.mine::before{background:var(--border);}
+.story-ring > *{position:relative;z-index:1;}
+.story-ring .av{width:58px;height:58px;font-size:17px;border-width:3px;}
+.story-name{font-size:10.5px;font-weight:600;color:var(--ink-soft);width:70px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.story-add{position:absolute;right:-1px;bottom:-1px;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;border:2.5px solid var(--surface);display:flex;align-items:center;justify-content:center;z-index:2;font-size:15px;font-weight:700;line-height:1;}
+
+/* ---- gönderi ---- */
+.post{
+  background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:14px;margin-bottom:12px;
+  content-visibility:auto;contain-intrinsic-size:auto 420px;
+}
+.post-head{display:flex;align-items:center;gap:11px;margin-bottom:11px;}
+.post-head .av{width:42px;height:42px;font-size:13.5px;}
+.post-who{flex:1;min-width:0;}
+.post-name{font-size:14.5px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:5px;}
+.post-sub{font-size:11.5px;color:var(--muted);margin-top:1px;}
+.post-text{font-size:14.5px;line-height:1.55;white-space:pre-wrap;margin-bottom:12px;}
+.post-attach{display:flex;gap:12px;align-items:center;background:var(--surface-2);border-radius:14px;padding:11px;margin-bottom:12px;}
+.post-cover{width:50px;height:50px;border-radius:12px;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;}
+.post-cover svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;}
+.post-del{
+  width:36px;height:36px;flex:none;border:none;background:none;border-radius:50%;
+  color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
+.post-del:active{background:var(--surface-2);color:var(--critical);}
+.post-del svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;}
+.lb-del{
+  position:absolute;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);
+  background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.25);color:#fff;
+  border-radius:12px;padding:12px 20px;font-size:14px;font-weight:700;cursor:pointer;min-height:44px;
+}
+.port-del{
+  width:34px;height:34px;flex:none;border:none;background:none;border-radius:50%;
+  color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
+.port-del svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;}
+.post-actions{display:flex;gap:6px;border-top:1px solid var(--border);padding-top:10px;}
+.act{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:none;border:none;
+  cursor:pointer;padding:8px 4px;min-height:44px;border-radius:10px;color:var(--muted);font-size:12.5px;font-weight:700;
+  transition:color .15s ease,background-color .15s ease;
+}
+.act:active{background:var(--surface-2);}
+.act svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;}
+.act.on{color:var(--critical);}
+.act.on svg{fill:var(--critical);stroke:var(--critical);}
+
+/* ---- ilanlar ---- */
+.ad{
+  background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:15px;
+  content-visibility:auto;contain-intrinsic-size:auto 300px;
+}
+.ad-top{display:flex;align-items:center;gap:11px;margin-bottom:11px;}
+.ad-top .av{width:38px;height:38px;font-size:12.5px;}
+.ad-kind{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.02em;}
+.kind-seek{background:var(--warning-soft);color:var(--warning);}
+.kind-offer{background:var(--success-soft);color:var(--success);}
+.ad-title{font-size:16px;font-weight:800;letter-spacing:-.01em;margin:2px 0 6px;}
+.ad-body{font-size:13.5px;color:var(--ink-soft);line-height:1.55;margin-bottom:11px;}
+.ad-meta{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:13px;}
+.ad-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid var(--border);padding-top:12px;}
+.ad-price{font-size:15px;font-weight:800;}
+.ad-price small{font-size:11.5px;color:var(--muted);font-weight:600;display:block;}
+.btn-sm{background:var(--accent);color:var(--accent-ink);border:none;border-radius:11px;padding:10px 18px;min-height:44px;font-weight:700;font-size:13.5px;cursor:pointer;flex:none;}
+.btn-sm:active{transform:scale(.97);}
+.btn-sm.done{background:var(--surface-2);color:var(--muted);}
+
+/* ---- profil ---- */
+.pro-banner{height:118px;margin:-18px -18px 0;}
+.pro-head{display:flex;align-items:flex-end;gap:13px;margin-top:-34px;padding:0 2px;}
+.pro-head .av{width:78px;height:78px;font-size:25px;}
+.pro-id{padding-bottom:5px;min-width:0;}
+.pro-name{font-size:21px;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:6px;}
+.verified{width:17px;height:17px;flex:none;color:var(--info);display:inline-flex;}
+.verified svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2.4;}
+.pro-role{font-size:13px;color:var(--muted);margin-top:2px;}
+.follow-row{display:flex;gap:18px;margin:14px 2px 0;}
+.follow-row b{font-weight:800;}
+.follow-row span{font-size:13px;color:var(--muted);}
+.pro-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:14px 0;}
+.pro-stat{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:11px 8px;text-align:center;}
+.pro-stat .v{font-size:17px;font-weight:800;letter-spacing:-.01em;}
+.pro-stat .l{font-size:10.5px;color:var(--muted);font-weight:600;margin-top:2px;}
+.pro-actions{display:flex;gap:9px;margin-bottom:22px;}
+.btn{
+  flex:1;background:var(--accent);color:var(--accent-ink);border:none;border-radius:14px;
+  padding:14px;font-weight:700;font-size:14.5px;cursor:pointer;transition:transform .12s ease,filter .15s ease;
+}
+.btn:active{transform:scale(.98);filter:brightness(1.08);}
+.btn-ghost{background:var(--surface);color:var(--ink);border:1.5px solid var(--border);}
+.btn-ghost:active{background:var(--surface-2);}
+.pro-bio{font-size:14px;color:var(--ink-soft);line-height:1.65;margin:0 0 22px;white-space:pre-wrap;}
+.badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px;}
+.badge{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:7px 12px;font-size:12px;font-weight:700;color:var(--ink-soft);}
+.badge svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;color:var(--accent);}
+.port-item{display:flex;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:11px;}
+.port-cover{width:54px;height:54px;border-radius:12px;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;}
+.port-cover svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.9;}
+.port-body{flex:1;min-width:0;}
+.port-title{font-size:14.5px;font-weight:700;letter-spacing:-.01em;}
+.port-meta{font-size:12px;color:var(--muted);margin-top:3px;}
+.port-type{display:inline-block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);margin-bottom:2px;}
+
+/* ---- panel ---- */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:26px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 14px 15px;}
+.stat-icon{width:34px;height:34px;border-radius:10px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+.stat-icon svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.9;}
+.stat-card .label{font-size:12px;color:var(--muted);font-weight:600;line-height:1.3;}
+.stat-card .value{font-size:25px;font-weight:800;letter-spacing:-.02em;margin-top:3px;}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;margin:0 0 12px;gap:10px;}
+.sec-head h3{font-size:17px;}
+.sec-head .hint{font-size:12px;color:var(--muted);flex:none;}
+.card-list{display:flex;flex-direction:column;gap:10px;}
+.feed-row{display:flex;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:13px 14px;}
+.feed-icon{width:36px;height:36px;border-radius:50%;flex:none;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;}
+.feed-icon svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.9;}
+.feed-text{font-size:13.5px;font-weight:500;line-height:1.4;}
+.feed-time{font-size:11.5px;color:var(--muted);margin-top:3px;}
+
+/* ---- keşfet ---- */
+.search-wrap{position:relative;margin-bottom:12px;}
+.search-wrap > svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:1.8;pointer-events:none;}
+.search-input{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:13px 14px 13px 42px;color:var(--ink);font-size:15px;transition:border-color .15s ease;}
+.search-input:focus{border-color:var(--accent);}
+.chip-row{display:flex;gap:8px;overflow-x:auto;padding:0 18px 4px;margin:0 -18px 16px;}
+.chip{
+  flex:none;border:1.5px solid var(--border);background:var(--surface);color:var(--ink-soft);
+  padding:11px 16px;min-height:44px;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;
+  transition:background-color .15s ease,color .15s ease,border-color .15s ease;
+}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
+.pcard{width:100%;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px;cursor:pointer;display:flex;gap:13px;align-items:center;transition:transform .12s ease,box-shadow .15s ease;}
+.pcard:active{transform:scale(.985);box-shadow:var(--shadow);}
+.pcard .av{width:50px;height:50px;font-size:15px;border-radius:14px;}
+.pcard .fr,.pcard .fr::before{border-radius:16px;}
+.pcard-body{flex:1;min-width:0;display:block;}
+.pcard-body > span{display:block;}
+.pcard .kind{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;}
+.pcard .nm{font-size:15.5px;font-weight:700;letter-spacing:-.01em;margin-top:1px;display:flex;align-items:center;gap:5px;}
+.pcard .meta{font-size:12.5px;color:var(--ink-soft);margin-top:2px;}
+.pcard .metric{font-size:12px;color:var(--accent);font-weight:700;margin-top:4px;}
+.empty{text-align:center;color:var(--muted);font-size:13.5px;padding:34px 10px;line-height:1.6;}
+
+/* ---- ortak ---- */
+.pill{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:700;white-space:nowrap;}
+.pill-success{background:var(--success-soft);color:var(--success);}
+.pill-warning{background:var(--warning-soft);color:var(--warning);}
+.pill-critical{background:var(--critical-soft);color:var(--critical);}
+.pill-info{background:var(--info-soft);color:var(--info);}
+.tag{background:var(--surface-2);border:1px solid var(--border);border-radius:7px;padding:4px 9px;font-size:11.5px;color:var(--ink-soft);font-weight:600;}
+.info-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:15px;}
+.info-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+.info-title{font-size:15.5px;font-weight:700;letter-spacing:-.01em;}
+.info-sub{font-size:12.5px;color:var(--muted);margin-top:3px;}
+.info-foot{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+.info-amount{font-size:16px;font-weight:800;}
+.date-chip{flex:none;text-align:center;background:var(--accent-soft);color:var(--accent);border-radius:12px;padding:7px 11px;min-width:56px;}
+.date-chip .d{font-size:17px;font-weight:800;line-height:1.1;}
+.date-chip .m{font-size:10.5px;font-weight:700;text-transform:uppercase;}
+.dsp-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.dsp-row:last-child{border-bottom:none;padding-bottom:0;}
+.pay-row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:13px 14px;}
+.pay-amt{font-weight:800;font-size:14.5px;white-space:nowrap;}
+.pay-pos{color:var(--success);}
+.pay-neg{color:var(--critical);}
+
+/* ---- mesajlar ---- */
+.thread{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:13px 14px;cursor:pointer;transition:transform .12s ease;}
+.thread:active{transform:scale(.985);}
+.thread .av{width:44px;height:44px;font-size:13.5px;}
+.thread-body{flex:1;min-width:0;}
+.thread-top{display:flex;justify-content:space-between;gap:8px;align-items:baseline;}
+.thread-name{font-weight:700;font-size:14px;}
+.thread-time{font-size:11px;color:var(--muted);flex:none;}
+.thread-preview{font-size:12.5px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px;}
+.unread-dot{width:9px;height:9px;border-radius:50%;background:var(--accent);flex:none;}
+
+/* sohbet ekranı */
+.chat-screen{
+  position:absolute;inset:0;z-index:24;background:var(--bg);display:none;flex-direction:column;
+}
+.chat-screen.open{display:flex;animation:slideIn .28s cubic-bezier(.22,.61,.36,1);}
+@keyframes slideIn{from{transform:translateX(24px);opacity:0;}to{transform:none;opacity:1;}}
+.chat-head{flex:none;background:var(--surface);border-bottom:1px solid var(--border);padding:calc(12px + env(safe-area-inset-top)) 14px 11px;display:flex;align-items:center;gap:11px;}
+.chat-head .av{width:38px;height:38px;font-size:12.5px;}
+.chat-head-name{font-size:15.5px;font-weight:800;letter-spacing:-.01em;}
+.chat-head-sub{font-size:11.5px;color:var(--muted);margin-top:1px;}
+.chat-body{flex:1;overflow-y:auto;padding:18px 16px;display:flex;flex-direction:column;gap:9px;}
+.bubble{max-width:78%;padding:11px 14px;border-radius:18px;font-size:14.5px;line-height:1.45;position:relative;}
+.bubble .t{display:block;font-size:10.5px;margin-top:5px;opacity:.65;}
+.b-peer{align-self:flex-start;background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:6px;}
+.b-me{align-self:flex-end;background:var(--accent);color:var(--accent-ink);border-bottom-right-radius:6px;}
+.chat-day{align-self:center;font-size:11px;font-weight:700;color:var(--muted);background:var(--surface-2);padding:5px 12px;border-radius:999px;margin:4px 0;}
+.composer{flex:none;display:flex;gap:9px;padding:11px 14px calc(11px + env(safe-area-inset-bottom));background:var(--surface);border-top:1px solid var(--border);}
+.composer input{flex:1;background:var(--surface-2);border:1.5px solid transparent;border-radius:999px;padding:12px 16px;font-size:14.5px;}
+.composer input:focus{border-color:var(--accent);background:var(--surface);}
+.send-btn{width:44px;height:44px;flex:none;border-radius:50%;border:none;background:var(--accent);color:var(--accent-ink);cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.send-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;}
+.send-btn:active{transform:scale(.94);}
+
+/* ---- kamera ---- */
+.cam-screen{
+  position:absolute;inset:0;z-index:44;background:#000;display:none;flex-direction:column;
+  transform:translateX(-100%);transition:transform .3s cubic-bezier(.22,.61,.36,1);
+}
+.cam-screen.open{display:flex;transform:translateX(0);}
+.cam-stage{flex:1;position:relative;overflow:hidden;background:#000;}
+#camVideo{width:100%;height:100%;object-fit:cover;display:block;background:#000;}
+#camVideo.mirror{transform:scaleX(-1);}
+.cam-fallback{
+  position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;padding:34px;text-align:center;color:#fff;
+  background:radial-gradient(circle at 50% 35%,#312E81,#0B0F19 70%);
+}
+.cam-fallback.on{display:flex;}
+.cam-fallback svg{width:46px;height:46px;stroke:rgba(255,255,255,.8);fill:none;stroke-width:1.6;}
+.cam-fallback h4{font-size:17px;font-weight:800;margin:0;}
+.cam-fallback p{font-size:13.5px;opacity:.75;margin:0;line-height:1.5;max-width:30ch;}
+.cam-top{
+  position:absolute;top:0;left:0;right:0;z-index:2;display:flex;align-items:center;gap:10px;
+  padding:calc(12px + env(safe-area-inset-top)) 14px 12px;
+  background:linear-gradient(180deg,rgba(0,0,0,.55),transparent);
+}
+.cam-btn{
+  width:44px;height:44px;flex:none;border-radius:50%;border:none;cursor:pointer;
+  background:rgba(0,0,0,.42);color:#fff;display:flex;align-items:center;justify-content:center;
+}
+.cam-btn svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;}
+.cam-btn.txt{font-size:15px;font-weight:800;}
+.cam-spacer{flex:1;}
+.cam-bottom{
+  position:absolute;bottom:0;left:0;right:0;z-index:2;
+  padding:0 0 calc(16px + env(safe-area-inset-bottom));
+  background:linear-gradient(0deg,rgba(0,0,0,.6),transparent);
+}
+.cam-modes{display:flex;justify-content:center;gap:26px;padding:12px 0 16px;}
+.cam-mode{
+  background:none;border:none;cursor:pointer;color:rgba(255,255,255,.72);
+  font-size:12.5px;font-weight:800;letter-spacing:.08em;padding:12px 8px;min-height:44px;position:relative;
+}
+.cam-mode[aria-pressed="true"]{color:#fff;}
+.cam-mode[aria-pressed="true"]::after{
+  content:'';position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);
+  width:5px;height:5px;border-radius:50%;background:#fff;
+}
+.cam-row{display:flex;align-items:center;justify-content:space-between;padding:0 26px;}
+.shutter{
+  width:74px;height:74px;border-radius:50%;border:5px solid rgba(255,255,255,.9);
+  background:rgba(255,255,255,.25);cursor:pointer;flex:none;
+  transition:transform .12s ease,background-color .12s ease;
+}
+.shutter:active{transform:scale(.92);background:rgba(255,255,255,.55);}
+.cam-thumb{
+  width:46px;height:46px;border-radius:12px;border:2px solid rgba(255,255,255,.7);
+  overflow:hidden;background:rgba(255,255,255,.15);cursor:pointer;padding:0;flex:none;
+  display:flex;align-items:center;justify-content:center;color:#fff;
+}
+.cam-thumb img{width:100%;height:100%;object-fit:cover;}
+.cam-thumb svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;}
+
+/* çekim sonrası */
+.cam-compose{position:absolute;inset:0;z-index:3;background:#000;display:none;flex-direction:column;}
+.cam-compose.on{display:flex;}
+.cc-stage{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.cc-stage img{width:100%;height:100%;object-fit:contain;}
+.cc-caption{
+  position:absolute;left:16px;right:16px;bottom:16px;
+  background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.2);border-radius:14px;
+  padding:13px 15px;color:#fff;font-size:14.5px;
+}
+.cc-caption::placeholder{color:rgba(255,255,255,.6);}
+.cc-bar{
+  flex:none;display:flex;gap:10px;padding:14px 16px calc(16px + env(safe-area-inset-bottom));
+  background:#000;
+}
+.cc-bar .btn{border-radius:14px;}
+.cc-bar .btn-ghost{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.25);}
+
+/* ---- story görüntüleyici ---- */
+.story-viewer{position:absolute;inset:0;z-index:40;background:#000;display:none;flex-direction:column;}
+.story-viewer.open{display:flex;}
+.sv-bars{display:flex;gap:4px;padding:calc(12px + env(safe-area-inset-top)) 12px 0;}
+.sv-bar{flex:1;height:3px;border-radius:999px;background:rgba(255,255,255,.3);overflow:hidden;}
+.sv-bar i{display:block;height:100%;width:0;background:#fff;border-radius:999px;}
+.sv-bar.done i{width:100%;}
+.sv-bar.active i{animation:grow 5s linear forwards;}
+@keyframes grow{from{width:0;}to{width:100%;}}
+.sv-head{display:flex;align-items:center;gap:11px;padding:14px 16px;color:#fff;}
+.sv-head .av{width:38px;height:38px;font-size:12.5px;background:rgba(255,255,255,.2);color:#fff;border-color:transparent;}
+.sv-name{font-size:14.5px;font-weight:800;}
+.sv-time{font-size:11.5px;opacity:.8;}
+.sv-close{margin-left:auto;background:none;border:none;color:#fff;font-size:26px;line-height:1;cursor:pointer;width:44px;height:44px;display:flex;align-items:center;justify-content:center;}
+.sv-stage{flex:1;display:flex;align-items:center;justify-content:center;padding:30px 26px 60px;position:relative;}
+.sv-text{color:#fff;font-size:25px;font-weight:800;line-height:1.35;letter-spacing:-.02em;text-align:center;text-shadow:0 2px 20px rgba(0,0,0,.35);white-space:pre-wrap;}
+.sv-nav{position:absolute;inset:0;display:flex;}
+.sv-nav button{flex:1;background:none;border:none;cursor:pointer;}
+
+/* ---- menü ---- */
+.menu-list{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.menu-item{display:flex;align-items:center;gap:13px;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--border);padding:15px 16px;cursor:pointer;font-size:15px;font-weight:600;color:var(--ink);}
+.menu-item:last-child{border-bottom:none;}
+.menu-item:active{background:var(--surface-2);}
+.menu-item .m-ico{width:38px;height:38px;border-radius:11px;flex:none;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;}
+.menu-item .m-ico svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;}
+.menu-item .chev{margin-left:auto;color:var(--muted);display:flex;}
+.menu-item .chev svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;}
+.danger-btn{width:100%;margin-top:14px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;font-size:15px;font-weight:700;color:var(--critical);cursor:pointer;}
+.danger-btn:active{background:var(--critical-soft);}
+
+/* ---- alt sayfalar ---- */
+.backdrop{position:absolute;inset:0;background:rgba(15,23,42,.45);opacity:0;pointer-events:none;transition:opacity .28s ease;z-index:18;}
+.backdrop.open{opacity:1;pointer-events:auto;}
+.sheet{
+  position:absolute;left:0;right:0;bottom:0;z-index:19;background:var(--surface);
+  border-radius:26px 26px 0 0;box-shadow:var(--sheet-shadow);max-height:88%;overflow-y:auto;
+  padding:10px 20px calc(24px + env(safe-area-inset-bottom));
+  transform:translateY(101%);transition:transform .32s cubic-bezier(.22,.61,.36,1);
+}
+.sheet.open{transform:translateY(0);}
+.grab{width:42px;height:5px;border-radius:999px;background:var(--border);margin:0 auto 16px;}
+.sheet h3{font-size:19px;margin-bottom:16px;}
+.sheet-head{display:flex;gap:14px;align-items:center;margin-bottom:16px;}
+.sheet-head .av{width:56px;height:56px;font-size:19px;border-radius:16px;}
+.sheet-head .fr,.sheet-head .fr::before{border-radius:18px;}
+.sheet-title{font-size:20px;font-weight:800;letter-spacing:-.02em;}
+.sheet-sub{font-size:12.5px;color:var(--muted);margin-top:3px;}
+.sheet-tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px;}
+.sheet-bio{font-size:14px;color:var(--ink-soft);line-height:1.6;margin:0 0 18px;}
+.sheet-actions{display:flex;gap:9px;}
+.opt-label{font-size:13px;font-weight:700;color:var(--ink-soft);margin:18px 0 10px;}
+.opt-row{display:flex;gap:10px;overflow-x:auto;padding:0 20px 6px;margin:0 -20px;}
+.opt{border:none;background:none;cursor:pointer;padding:0;flex:none;display:flex;flex-direction:column;align-items:center;gap:6px;width:66px;}
+.opt .cap{font-size:10.5px;font-weight:700;color:var(--muted);}
+.opt[aria-pressed="true"] .cap{color:var(--accent);}
+.opt .av{width:46px;height:46px;font-size:13px;}
+.opt-banner{width:66px;height:44px;border-radius:11px;border:2px solid transparent;}
+.opt[aria-pressed="true"] .opt-banner{border-color:var(--accent);}
+.opt-accent{width:40px;height:40px;border-radius:50%;border:3px solid transparent;}
+.opt[aria-pressed="true"] .opt-accent{border-color:var(--ink);}
+.field{display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;color:var(--ink-soft);}
+.text-input,.textarea,.select{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:14px;color:var(--ink);font-weight:400;font-size:15px;transition:border-color .15s ease;width:100%;}
+.textarea{min-height:96px;resize:vertical;line-height:1.55;}
+.text-input:focus,.textarea:focus,.select:focus{border-color:var(--accent);}
+.seg{display:flex;background:var(--surface-2);border-radius:999px;padding:4px;gap:4px;}
+.seg button{flex:1;border:none;background:none;padding:13px 0;min-height:44px;border-radius:999px;font-weight:700;font-size:13px;color:var(--muted);cursor:pointer;}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(15,23,42,.1);}
+
+/* ---- giriş ---- */
+.auth{flex:1;display:flex;flex-direction:column;justify-content:center;padding:calc(28px + env(safe-area-inset-top)) 26px calc(28px + env(safe-area-inset-bottom));overflow-y:auto;background:var(--bg);}
+.auth-brand{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:8px;}
+.auth-logo{width:62px;height:62px;border-radius:19px;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;}
+.auth-logo svg{width:32px;height:32px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;}
+.auth-name{font-size:25px;font-weight:800;letter-spacing:-.02em;}
+.auth-lead{text-align:center;color:var(--muted);font-size:13.5px;margin:0 0 24px;line-height:1.5;}
+.auth-tabs{display:flex;background:var(--surface-2);border-radius:999px;padding:4px;gap:4px;margin-bottom:20px;}
+.auth-tab{flex:1;border:none;background:none;padding:11px 0;border-radius:999px;font-weight:700;font-size:14px;color:var(--muted);cursor:pointer;transition:background-color .15s ease,color .15s ease;}
+.auth-tab[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(15,23,42,.1);}
+.social-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface);color:var(--ink);font-weight:700;font-size:14.5px;cursor:pointer;margin-bottom:10px;transition:transform .12s ease;}
+.social-btn:active{transform:scale(.985);background:var(--surface-2);}
+.auth-divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--muted);font-size:12px;}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.auth-form{display:flex;flex-direction:column;gap:14px;}
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-height:196px;overflow-y:auto;}
+.role-chip{border:1.5px solid var(--border);background:var(--surface);border-radius:12px;padding:12px 11px;font-size:12.5px;font-weight:700;color:var(--ink-soft);cursor:pointer;text-align:left;transition:border-color .15s ease,background-color .15s ease,color .15s ease;}
+.role-chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);}
+
+.toast{
+  position:absolute;left:20px;right:20px;bottom:calc(96px + env(safe-area-inset-bottom));
+  background:var(--ink);color:var(--bg);padding:14px 18px;border-radius:14px;
+  font-size:13.5px;font-weight:600;text-align:center;
+  transform:translateY(14px);opacity:0;transition:all .24s ease;z-index:45;pointer-events:none;
+}
+.toast.show{transform:translateY(0);opacity:1;}
+</style>
+
+<div class="device" id="device">
+
+  <!-- GİRİŞ -->
+  <div class="auth" id="authScreen">
+    <div class="auth-brand">
+      <div class="auth-logo"><svg viewBox="0 0 24 24"><path d="M3 10v4"/><path d="M8 6v12"/><path d="M13 3v18"/><path d="M18 7v10"/><path d="M22 10v4"/></svg></div>
+      <div class="auth-name">MSC Music</div>
+    </div>
+    <p class="auth-lead">Sanatçılar, menajerler, mekanlar, distribütörler ve markalar için tek uygulama.</p>
+    <div class="auth-tabs" id="authTabs">
+      <button class="auth-tab" data-tab="login" aria-pressed="true">Giriş Yap</button>
+      <button class="auth-tab" data-tab="signup" aria-pressed="false">Kayıt Ol</button>
+    </div>
+    <button type="button" class="social-btn" id="googleBtn">
+      <svg viewBox="0 0 24 24" width="19" height="19"><path fill="#4285F4" d="M23.52 12.27c0-.82-.07-1.6-.2-2.36H12v4.47h6.47c-.28 1.5-1.13 2.77-2.4 3.62v3h3.87c2.27-2.09 3.58-5.17 3.58-8.73z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.94-2.9l-3.87-3c-1.08.72-2.45 1.15-4.07 1.15-3.13 0-5.78-2.11-6.73-4.96H1.27v3.1C3.25 21.3 7.31 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.61H1.27C.46 8.24 0 10.06 0 12s.46 3.76 1.27 5.39z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.7 1.27 6.61l4 3.1c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
+      <span>Google ile devam et</span>
+    </button>
+    <button type="button" class="social-btn" id="appleBtn">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M16.7 12.7c0-2.1 1.7-3.1 1.8-3.2-1-1.4-2.5-1.6-3-1.6-1.3-.1-2.5.7-3.1.7-.6 0-1.6-.7-2.7-.7-1.4 0-2.6.8-3.3 2-1.4 2.4-.4 6 1 8 .7 1 1.5 2.1 2.6 2 1-.1 1.4-.7 2.7-.7s1.6.7 2.7.6c1.1 0 1.8-1 2.5-2 .8-1.1 1.1-2.2 1.1-2.3-.1 0-2.2-.8-2.2-3.2zM14.6 6.2c.6-.7 1-1.7.9-2.7-.9.1-1.9.6-2.5 1.3-.5.6-1 1.6-.9 2.6 1 .1 1.9-.5 2.5-1.2z"/></svg>
+      <span>Apple ile devam et</span>
+    </button>
+    <div class="auth-divider"><span>veya e-posta ile</span></div>
+    <form class="auth-form" id="authForm">
+      <label class="field">E-posta<input type="email" required placeholder="ornek@eposta.com" class="text-input" id="authEmail" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false"></label>
+      <label class="field">Şifre<input type="password" required placeholder="••••••••" class="text-input" id="authPassword" autocomplete="current-password"></label>
+      <div id="roleField" hidden>
+        <div class="field" style="margin-bottom:9px;">Sen kimsin?</div>
+        <div class="role-grid" id="roleGrid"></div>
+      </div>
+      <button type="submit" class="btn" id="authSubmit">Giriş Yap</button>
+    </form>
+  </div>
+
+  <!-- UYGULAMA -->
+  <div class="screen" id="appRoot" style="display:none;">
+    <header class="appbar">
+      <button class="icon-btn" id="backBtn" aria-label="Geri" hidden><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <button class="icon-btn" id="camBtn" aria-label="Kamera" hidden><svg viewBox="0 0 24 24"><path d="M3 8.5A2 2 0 0 1 5 6.5h2l1.4-2h7.2L17 6.5h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.6"/></svg></button>
+      <h1 id="viewTitle">Akış</h1>
+      <button class="icon-btn" id="actionBtn" aria-label="İşlem" hidden></button>
+    </header>
+
+    <div class="scroll" id="scrollArea">
+
+      <section id="view-feed" class="view active">
+        <div class="story-strip" id="storyStrip"></div>
+        <div id="postList"></div>
+      </section>
+
+      <section id="view-discovery" class="view">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="search-input" id="discoverySearch" type="search" placeholder="İsim, uzmanlık veya şehir ara…">
+        </div>
+        <div class="chip-row" id="chipRow"></div>
+        <div class="card-list" id="discoveryGrid"></div>
+      </section>
+
+      <section id="view-ads" class="view">
+        <div class="chip-row" id="adChips"></div>
+        <div class="card-list" id="adList"></div>
+      </section>
+
+      <section id="view-messages" class="view">
+        <div class="card-list" id="threadList"></div>
+      </section>
+
+      <section id="view-profile" class="view">
+        <div class="pro-banner" id="proBanner"></div>
+        <div class="pro-head">
+          <span class="fr" id="proFrame"><span class="av" id="proAvatar">LB</span></span>
+          <div class="pro-id">
+            <div class="pro-name"><span id="proName">Lil Bey</span><span class="verified" id="proVerified" hidden><svg viewBox="0 0 24 24"><path d="M12 2.5l2.4 1.8 3 .1.9 2.9 2.4 1.8-1 2.9 1 2.9-2.4 1.8-.9 2.9-3 .1L12 21.5l-2.4-1.8-3-.1-.9-2.9L3.3 15l1-2.9-1-2.9 2.4-1.8.9-2.9 3-.1z"/><path d="M9 12l2 2 4-4"/></svg></span></div>
+            <div class="pro-role" id="proRole">Sanatçı · İzmir</div>
+          </div>
+        </div>
+        <div class="follow-row" id="proFollowRow"></div>
+        <div class="pro-stats" id="proStats"></div>
+        <div class="pro-actions" id="proActions"></div>
+
+        <div class="sec-head"><h3>Hakkımda</h3></div>
+        <p class="pro-bio" id="proBio"></p>
+
+        <div class="sec-head"><h3>Rozetler</h3></div>
+        <div class="badge-row" id="proBadges"></div>
+
+        <div class="sec-head"><h3>Fotoğraflar</h3><span class="hint" id="proPhotoCount"></span></div>
+        <div class="photo-grid" id="proPhotos" style="margin-bottom:24px;"></div>
+
+        <div class="sec-head"><h3>Paylaşımlar</h3><span class="hint" id="proPostCount"></span></div>
+        <div id="proPosts" style="margin-bottom:24px;"></div>
+
+        <div class="sec-head"><h3>Portföy</h3><span class="hint" id="proPortCount"></span></div>
+        <div class="card-list" id="proPortfolio"></div>
+
+        <div id="proOwnerZone">
+          <div class="sec-head" style="margin-top:26px;"><h3>Yönetim</h3></div>
+          <div class="menu-list" id="moreMenu"></div>
+          <button class="danger-btn" id="logoutBtn">Çıkış yap</button>
+        </div>
+      </section>
+
+      <section id="view-panel" class="view">
+        <div class="stat-grid" id="statGrid"></div>
+        <div class="sec-head"><h3>Bugün öne çıkanlar</h3></div>
+        <div class="card-list" id="activityList"></div>
+      </section>
+
+      <section id="view-bookings" class="view"><div class="card-list" id="bookingsList"></div></section>
+      <section id="view-deals" class="view"><div id="dealsList"></div></section>
+      <section id="view-campaigns" class="view"><div class="card-list" id="campaignList"></div></section>
+
+      <section id="view-revenue" class="view">
+        <div class="sec-head"><h3>Dağıtım durumu</h3><span class="hint">Platform bazlı</span></div>
+        <div class="card-list" id="releaseList" style="margin-bottom:26px;"></div>
+        <div class="sec-head"><h3>Ödemeler &amp; royalti</h3><span class="hint">Son işlemler</span></div>
+        <div class="card-list" id="paymentsList"></div>
+      </section>
+    </div>
+
+    <nav class="tabbar" id="tabbar" aria-label="Ana menü"></nav>
+  </div>
+
+  <!-- SOHBET -->
+  <div class="chat-screen" id="chatScreen">
+    <header class="chat-head">
+      <button class="icon-btn" id="chatBack" aria-label="Geri"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <span class="fr" id="chatFrame"><span class="av" id="chatAvatar"></span></span>
+      <div style="min-width:0;">
+        <div class="chat-head-name" id="chatName"></div>
+        <div class="chat-head-sub" id="chatSub"></div>
+      </div>
+    </header>
+    <div class="chat-body" id="chatBody" role="log" aria-live="polite" aria-label="Mesajlar"></div>
+    <form class="composer" id="composer">
+      <input id="chatInput" placeholder="Mesaj yaz…" autocomplete="off" enterkeyhint="send" aria-label="Mesaj metni">
+      <button class="send-btn" type="submit" aria-label="Gönder"><svg viewBox="0 0 24 24"><path d="M21.5 12L3 4.5l3 7.5-3 7.5z"/><path d="M6 12h15.5"/></svg></button>
+    </form>
+  </div>
+
+  <!-- KAMERA -->
+  <div class="cam-screen" id="camScreen">
+    <div class="cam-stage">
+      <video id="camVideo" autoplay playsinline muted></video>
+      <div class="cam-fallback" id="camFallback">
+        <svg viewBox="0 0 24 24"><path d="M3 8.5A2 2 0 0 1 5 6.5h2l1.4-2h7.2L17 6.5h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.6"/></svg>
+        <h4 id="camFallbackTitle">Kamera açılamadı</h4>
+        <p id="camFallbackText">Bu ortamda kamera izni yok. Aşağıdaki galeri düğmesinden fotoğraf seçebilirsin.</p>
+      </div>
+      <div class="cam-top">
+        <button class="cam-btn" id="camClose" aria-label="Kapat"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>
+        <div class="cam-spacer"></div>
+        <button class="cam-btn txt" id="camTextMode" aria-label="Metin story">Aa</button>
+        <button class="cam-btn" id="camFlip" aria-label="Kamerayı çevir"><svg viewBox="0 0 24 24"><path d="M4 9V7a2 2 0 0 1 2-2h3"/><path d="M20 15v2a2 2 0 0 1-2 2h-3"/><path d="M15 3l3 2-3 2"/><path d="M9 21l-3-2 3-2"/><circle cx="12" cy="12" r="3.2"/></svg></button>
+      </div>
+      <div class="cam-bottom">
+        <div class="cam-row">
+          <button class="cam-thumb" id="camGallery" aria-label="Galeriden seç"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.8"/><path d="M4 17l4.5-5 3.5 3.5L15.5 12 20 17"/></svg></button>
+          <button class="shutter" id="camShutter" aria-label="Çek"></button>
+          <span style="width:46px;"></span>
+        </div>
+        <div class="cam-modes" id="camModes">
+          <button class="cam-mode" data-mode="story" aria-pressed="true">STORY</button>
+          <button class="cam-mode" data-mode="post" aria-pressed="false">GÖNDERİ</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="cam-compose" id="camCompose">
+      <div class="cc-stage">
+        <img id="ccImg" alt="Çekilen fotoğraf">
+        <input class="cc-caption" id="ccCaption" placeholder="Bir şeyler yaz…" autocomplete="off" enterkeyhint="done" aria-label="Fotoğraf açıklaması">
+      </div>
+      <div class="cc-bar">
+        <button class="btn btn-ghost" id="ccRetake">Yeniden çek</button>
+        <button class="btn" id="ccShare">Paylaş</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORY -->
+  <div class="story-viewer" id="storyViewer">
+    <div class="sv-bars" id="svBars"></div>
+    <div class="sv-head">
+      <span class="av" id="svAvatar"></span>
+      <div><div class="sv-name" id="svName"></div><div class="sv-time" id="svTime"></div></div>
+      <button class="sv-close" id="svClose" aria-label="Kapat">✕</button>
+    </div>
+    <div class="sv-stage" id="svStage">
+      <div class="sv-text" id="svText"></div>
+      <div class="sv-nav"><button id="svPrev" aria-label="Önceki"></button><button id="svNext" aria-label="Sonraki"></button></div>
+    </div>
+  </div>
+
+  <div class="backdrop" id="backdrop"></div>
+
+  <!-- profil önizleme -->
+  <div class="sheet" id="peekSheet" aria-hidden="true">
+    <div class="grab"></div>
+    <div class="sheet-head">
+      <span class="fr" id="peekFrame"><span class="av" id="peekAvatar"></span></span>
+      <div style="min-width:0;">
+        <div class="sheet-title" id="peekTitle"></div>
+        <div class="sheet-sub" id="peekSub"></div>
+      </div>
+    </div>
+    <div class="sheet-tags" id="peekTags"></div>
+    <p class="sheet-bio" id="peekBio"></p>
+    <div class="sheet-actions">
+      <button class="btn btn-ghost" id="peekProfileBtn">Profili gör</button>
+      <button class="btn" id="peekFollowBtn">Takip et</button>
+    </div>
+  </div>
+
+  <!-- özelleştirme -->
+  <div class="sheet" id="editSheet" aria-hidden="true">
+    <div class="grab"></div>
+    <h3>Profili özelleştir</h3>
+    <label class="field">Görünen ad<input class="text-input" id="editName" placeholder="Adın" maxlength="40" autocomplete="nickname"></label>
+    <label class="field">Hakkımda<textarea class="textarea" id="editBio" placeholder="Kendini birkaç cümleyle tanıt…"></textarea></label>
+    <div class="opt-label">Hazır tema paketleri</div>
+    <div class="pack-row" id="packOpts"></div>
+    <div class="opt-label">Unvan</div>
+    <div class="opt-row" id="titleOpts" style="gap:8px;"></div>
+    <div class="opt-label">Profil fotoğrafı</div>
+    <div id="avPhotoRow"></div>
+    <div class="opt-label">Avatar çerçevesi</div>
+    <div class="opt-row" id="frameOpts"></div>
+    <div class="opt-label">Avatar rengi</div>
+    <div class="opt-row" id="avColorOpts"></div>
+    <div class="opt-label">Kapak görseli</div>
+    <div class="opt-row" id="bannerOpts"></div>
+    <div class="opt-label">Tema rengi</div>
+    <div class="opt-row" id="accentOpts"></div>
+    <button class="btn" id="saveProfileBtn" style="margin-top:22px;">Kaydet</button>
+  </div>
+
+  <!-- yorumlar -->
+  <div class="sheet sheet-fixed" id="commentSheet" aria-hidden="true">
+    <div class="grab"></div>
+    <h3 id="commentTitle">Yorumlar</h3>
+    <div class="sheet-scroll" id="commentList"></div>
+    <form class="cmt-composer" id="commentForm">
+      <input id="commentInput" placeholder="Yorum yaz…" autocomplete="off" enterkeyhint="send" aria-label="Yorum metni">
+      <button class="send-btn" type="submit" aria-label="Gönder"><svg viewBox="0 0 24 24"><path d="M21.5 12L3 4.5l3 7.5-3 7.5z"/><path d="M6 12h15.5"/></svg></button>
+    </form>
+  </div>
+
+  <!-- takipçi listesi -->
+  <div class="sheet sheet-fixed" id="peopleSheet" aria-hidden="true">
+    <div class="grab"></div>
+    <h3 id="peopleTitle">Takipçiler</h3>
+    <div class="sheet-scroll" id="peopleList"></div>
+  </div>
+
+  <!-- ayarlar -->
+  <div class="sheet" id="settingsSheet" aria-hidden="true">
+    <div class="grab"></div>
+    <h3>Ayarlar</h3>
+    <div class="opt-label" style="margin-top:0;">Görünüm</div>
+    <div class="seg" id="themeSeg">
+      <button type="button" data-theme="system" aria-pressed="true">Sistem</button>
+      <button type="button" data-theme="light" aria-pressed="false">Açık</button>
+      <button type="button" data-theme="dark" aria-pressed="false">Koyu</button>
+    </div>
+    <div class="opt-label">Bildirimler</div>
+    <div id="notifRows"></div>
+    <div class="opt-label">Gizlilik</div>
+    <div id="privacyRows"></div>
+    <div class="opt-label">Veriler</div>
+    <p style="font-size:12.5px;color:var(--muted);margin:0 0 12px;line-height:1.5;" id="storeNote"></p>
+    <button class="danger-btn" id="clearDataBtn" style="margin-top:0;">Tüm verilerimi sil</button>
+  </div>
+
+  <!-- portföye içerik -->
+  <div class="sheet" id="addSheet" aria-hidden="true">
+    <div class="grab"></div>
+    <h3>Portföye içerik ekle</h3>
+    <form id="addForm" style="display:flex;flex-direction:column;gap:14px;">
+      <label class="field">Başlık<input class="text-input" id="addTitle" required placeholder="Örn: Gece Yarısı"></label>
+      <label class="field">Tür<select class="select" id="addType"></select></label>
+      <label class="field">Açıklama<input class="text-input" id="addMeta" placeholder="Örn: Fono Müzik · Tekli"></label>
+      <label class="field">Yıl<input class="text-input" id="addYear" inputmode="numeric" placeholder="2026"></label>
+      <button type="submit" class="btn">Portföye ekle</button>
+    </form>
+  </div>
+
+  <!-- gönderi paylaş -->
+  <div class="sheet" id="postSheet" aria-hidden="true">
+    <div class="grab"></div>
+    <h3>Paylaşım yap</h3>
+    <form id="postForm" style="display:flex;flex-direction:column;gap:14px;">
+      <label class="field">Ne paylaşmak istersin?<textarea class="textarea" id="postText" required placeholder="Yeni tekli, sahne duyurusu, stüdyo günü…"></textarea></label>
+      <div id="postPhotoSlot"></div>
+      <button type="submit" class="btn">Paylaş</button>
+    </form>
+  </div>
+
+  <!-- story ekle -->
+  <div class="sheet" id="storySheet" aria-hidden="true">
+    <div class="grab"></div>
+    <h3>Story ekle</h3>
+    <form id="storyForm" style="display:flex;flex-direction:column;gap:14px;">
+      <label class="field">Story metni<input class="text-input" id="storyText" placeholder="Örn: Stüdyodayız 🎧"></label>
+      <div id="storyPhotoSlot"></div>
+      <div>
+        <div class="opt-label" style="margin-top:0;">Arka plan</div>
+        <div class="opt-row" id="storyBgOpts"></div>
+      </div>
+      <button type="submit" class="btn">Story’i paylaş</button>
+    </form>
+  </div>
+
+  <!-- fotoğraf görüntüleyici -->
+  <div class="lightbox" id="lightbox">
+    <img id="lightboxImg" alt="Fotoğraf">
+    <button class="lb-close" id="lbClose" aria-label="Kapat">✕</button>
+    <button class="lb-del" id="lbDel" hidden>Fotoğrafı sil</button>
+  </div>
+
+  <!-- ilan ver -->
+  <div class="sheet" id="adSheet" aria-hidden="true">
+    <div class="grab"></div>
+    <h3>İlan ver</h3>
+    <form id="adForm" style="display:flex;flex-direction:column;gap:14px;">
+      <div class="seg" id="adKindSeg">
+        <button type="button" data-kind="seek" aria-pressed="true">Arıyorum</button>
+        <button type="button" data-kind="offer" aria-pressed="false">Sunuyorum</button>
+      </div>
+      <label class="field">Başlık<input class="text-input" id="adTitle" required placeholder="Örn: Mekanımıza rezidans DJ lazım"></label>
+      <label class="field">Açıklama<textarea class="textarea" id="adBody" required placeholder="Detayları yaz: ne arıyorsun ya da ne sunuyorsun?"></textarea></label>
+      <label class="field">Şehir<input class="text-input" id="adCity" placeholder="Örn: İstanbul"></label>
+      <label class="field">Bütçe / Ücret<input class="text-input" id="adBudget" placeholder="Örn: ₺8.000 / gece" enterkeyhint="done"></label>
+      <button type="submit" class="btn">İlanı yayınla</button>
+    </form>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<script>
+const ICONS = {
+  feed:'<path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h10"/>',
+  discovery:'<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+  ads:'<path d="M3 10v4h3l6 4V6L6 10H3z"/><path d="M15 9a4 4 0 0 1 0 6"/>',
+  messages:'<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>',
+  profile:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/>',
+  panel:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+  bookings:'<rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/>',
+  deals:'<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M9 15l2 2 4-4"/>',
+  campaigns:'<path d="M3 10v4h3l6 4V6L6 10H3z"/><path d="M15 9a4 4 0 0 1 0 6"/>',
+  revenue:'<line x1="4" y1="20" x2="4" y2="12"/><line x1="10" y1="20" x2="10" y2="8"/><line x1="16" y1="20" x2="16" y2="4"/><line x1="20" y1="20" x2="4" y2="20"/>',
+  money:'<path d="M8 8h8l1.3 11a2 2 0 0 1-2 2.2H8.7a2 2 0 0 1-2-2.2z"/><path d="M9 8a3 3 0 0 1 6 0"/>',
+  note:'<path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/>',
+  pen:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+  upload:'<path d="M12 19V6"/><path d="M6 12l6-6 6 6"/><path d="M4 21h16"/>',
+  check:'<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5 5-5"/>',
+  chevron:'<path d="M9 6l6 6-6 6"/>',
+  star:'<path d="M12 3l2.6 5.6 6 .8-4.4 4.2 1.1 6.1L12 16.8 6.7 19.7l1.1-6.1L3.4 9.4l6-.8z"/>',
+  video:'<rect x="2" y="5" width="14" height="14" rx="2"/><path d="M16 10l6-3.5v11L16 14z"/>',
+  mic:'<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><line x1="12" y1="18" x2="12" y2="22"/>',
+  disc:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/>',
+  flame:'<path d="M12 22c4 0 7-2.7 7-6.5 0-4.5-4-6-4-9.5-2 1-3 2.7-3 4.5-1.2-.7-2-1.9-2-3.5C7.5 9 5 11.5 5 15.5 5 19.3 8 22 12 22z"/>',
+  users:'<circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.4 3.1-6 7-6s7 2.6 7 6"/><path d="M17 5.5a3.5 3.5 0 0 1 0 6.5"/><path d="M19 20c0-2.5-1-4.3-2.5-5.3"/>',
+  heart:'<path d="M12 20s-7-4.5-7-9.4A4 4 0 0 1 12 7.6 4 4 0 0 1 19 10.6C19 15.5 12 20 12 20z"/>',
+  comment:'<path d="M20 15a2 2 0 0 1-2 2H8l-4 3V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"/>',
+  share:'<circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.3"/><path d="M8.2 13.2l7.6 4.3"/>',
+  plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  camera:'<path d="M3 8.5A2 2 0 0 1 5 6.5h2l1.4-2h7.2L17 6.5h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.6"/>',
+  trash:'<path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/>',
+  image:'<rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.8"/><path d="M4 17l4.5-5 3.5 3.5L15.5 12 20 17"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 9 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 9a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/>',
+};
+
+const FRAMES = [
+  {id:'none',label:'Yok'},{id:'gold',label:'Altın'},{id:'neon',label:'Neon'},
+  {id:'holo',label:'Holo'},{id:'vinyl',label:'Vinil'},{id:'fire',label:'Alev'},
+  {id:'aurora',label:'Aurora'},{id:'mint',label:'Nane'},{id:'mono',label:'Mono'},
+  {id:'cyber',label:'Cyber'},{id:'sakura',label:'Sakura'},{id:'ice',label:'Buz'},
+  {id:'ember',label:'Köz'},{id:'chrome',label:'Krom'},{id:'legend',label:'Efsane'},
+];
+
+const AV_COLORS = [
+  {id:'default',label:'Varsayılan',bg:null,fg:null},
+  {id:'violet',label:'Mor',bg:'#EDE9FE',fg:'#6D28D9'},
+  {id:'rose',label:'Gül',bg:'#FFE4E6',fg:'#BE123C'},
+  {id:'amber',label:'Amber',bg:'#FEF3C7',fg:'#B45309'},
+  {id:'emerald',label:'Zümrüt',bg:'#D1FAE5',fg:'#047857'},
+  {id:'sky',label:'Gök',bg:'#E0F2FE',fg:'#0369A1'},
+  {id:'slate',label:'Füme',bg:'#E2E8F0',fg:'#334155'},
+  {id:'night',label:'Gece',bg:'#1E293B',fg:'#E2E8F0'},
+];
+
+const TITLES = [
+  {id:'none',label:'Unvan yok',icon:'star'},
+  {id:'rising',label:'Yükselen İsim',icon:'flame'},
+  {id:'stage',label:'Sahne Canavarı',icon:'mic'},
+  {id:'studio',label:'Stüdyo Faresi',icon:'disc'},
+  {id:'night',label:'Gece Kuşu',icon:'note'},
+  {id:'founder',label:'Kurucu Üye',icon:'star'},
+  {id:'collab',label:'İşbirlikçi',icon:'users'},
+  {id:'curator',label:'Küratör',icon:'check'},
+  {id:'veteran',label:'Sahne Emektarı',icon:'star'},
+];
+const TITLE_BY_ID = Object.fromEntries(TITLES.map(t => [t.id, t]));
+
+const PACKS = [
+  {id:'neongece',name:'Neon Gece',desc:'Holo · Neon · Mor',frame:'holo',banner:'neonlight',accent:'violet',av:'violet'},
+  {id:'altincag',name:'Altın Çağ',desc:'Altın · Gece · İndigo',frame:'gold',banner:'indigo',accent:'indigo',av:'amber'},
+  {id:'vinil',name:'Vinil Klasik',desc:'Vinil · Sahne · Füme',frame:'vinyl',banner:'stage',accent:'ocean',av:'slate'},
+  {id:'buzul',name:'Buzul',desc:'Buz · Okyanus · Okyanus',frame:'ice',banner:'ocean',accent:'ocean',av:'sky'},
+  {id:'kor',name:'Köz',desc:'Köz · Gün Batımı · Turuncu',frame:'ember',banner:'sunset',accent:'sunset',av:'amber'},
+  {id:'orman',name:'Orman',desc:'Aurora · Orman · Zümrüt',frame:'aurora',banner:'forest',accent:'emerald',av:'emerald'},
+  {id:'sakura',name:'Sakura',desc:'Sakura · Gün Batımı · Gül',frame:'sakura',banner:'sunset',accent:'rose',av:'rose'},
+];
+
+const BANNERS = {
+  indigo:{label:'Gece', css:'linear-gradient(135deg,#4338CA 0%,#1E1B4B 60%,#0F172A 100%)'},
+  sunset:{label:'Gün Batımı', css:'linear-gradient(135deg,#F97316 0%,#DB2777 55%,#4C1D95 100%)'},
+  ocean:{label:'Okyanus', css:'linear-gradient(135deg,#0EA5E9 0%,#0F766E 60%,#0F172A 100%)'},
+  forest:{label:'Orman', css:'linear-gradient(135deg,#34D399 0%,#047857 55%,#064E3B 100%)'},
+  neonlight:{label:'Neon', css:'linear-gradient(135deg,#A855F7 0%,#EC4899 50%,#22D3EE 100%)'},
+  stage:{label:'Sahne', css:'linear-gradient(180deg,#1F2937 0%,#111827 100%)'},
+};
+
+const ACCENTS = [
+  {id:'indigo',label:'İndigo',hex:'#4338CA'},{id:'violet',label:'Mor',hex:'#7C3AED'},
+  {id:'ocean',label:'Okyanus',hex:'#0891B2'},{id:'emerald',label:'Zümrüt',hex:'#059669'},
+  {id:'sunset',label:'Turuncu',hex:'#EA580C'},{id:'rose',label:'Gül',hex:'#E11D48'},
+];
+
+const PORT_TYPES = {
+  single:{label:'Tekli',icon:'note',css:'linear-gradient(135deg,#6366F1,#4338CA)'},
+  ep:{label:'EP / Albüm',icon:'disc',css:'linear-gradient(135deg,#8B5CF6,#6D28D9)'},
+  clip:{label:'Klip',icon:'video',css:'linear-gradient(135deg,#EC4899,#BE185D)'},
+  live:{label:'Sahne',icon:'mic',css:'linear-gradient(135deg,#F59E0B,#B45309)'},
+  prod:{label:'Prodüksiyon',icon:'disc',css:'linear-gradient(135deg,#0EA5E9,#0369A1)'},
+  campaign:{label:'Kampanya',icon:'campaigns',css:'linear-gradient(135deg,#10B981,#047857)'},
+  press:{label:'Basın',icon:'star',css:'linear-gradient(135deg,#64748B,#334155)'},
+  other:{label:'Diğer',icon:'star',css:'linear-gradient(135deg,#94A3B8,#475569)'},
+};
+
+const TABS = [
+  {id:'feed',label:'Akış',icon:'feed'},
+  {id:'discovery',label:'Keşfet',icon:'discovery'},
+  {id:'ads',label:'İlanlar',icon:'ads'},
+  {id:'messages',label:'Mesajlar',icon:'messages'},
+  {id:'profile',label:'Profil',icon:'profile'},
+];
+
+const SUB_VIEWS = [
+  {id:'panel',label:'Panelim',icon:'panel',desc:'Rolüne özel özet ve hareketler'},
+  {id:'bookings',label:'Rezervasyonlar',icon:'bookings',desc:'Performans teklifleri ve takvim'},
+  {id:'deals',label:'Anlaşmalar',icon:'deals',desc:'Sözleşme ve teklif durumları'},
+  {id:'campaigns',label:'Kampanyalar',icon:'campaigns',desc:'Marka sponsorlukları'},
+  {id:'revenue',label:'Gelir & Dağıtım',icon:'revenue',desc:'Royalti ve platform durumu'},
+];
+
+const VIEW_TITLE = {};
+TABS.forEach(t => VIEW_TITLE[t.id] = t.label);
+SUB_VIEWS.forEach(v => VIEW_TITLE[v.id] = v.label);
+
+const CATEGORIES = [
+  {id:'all',label:'Tümü'},{id:'artist',label:'Sanatçılar'},{id:'manager',label:'Menajerler'},
+  {id:'producer',label:'Prodüktörler'},{id:'venue',label:'Mekanlar'},{id:'playlist',label:'Playlistler'},
+  {id:'pr',label:'PR Desteği'},{id:'dj',label:'DJ’ler'},{id:'instrumentalist',label:'Enstrümacılar'},
+  {id:'video',label:'Klip & Video'},
+];
+const CATEGORY_LABEL = Object.fromEntries(CATEGORIES.map(c => [c.id, c.label]));
+
+const LISTINGS = [
+  {id:'a-lilbey',category:'artist',name:'Lil Bey',specialty:'Pop / R&B / Rap',city:'İzmir',
+   metricLabel:'Takipçi',metricValue:'125K',verified:true,frame:'holo',banner:'neonlight',
+   followers:125000,following:340,tags:['Pop','R&B','Stüdyo hazır'],
+   bio:'Fono Müzik etiketiyle üretimlerine devam eden, farklı janraları harmanlayan solo kayıt sanatçısı.',
+   about:'2021’den beri müzik üretiyorum. Pop, R&B ve rap’i kendi anlatımımla harmanlıyorum; sözlerimi kendim yazıyorum.\n\nŞu an Fono Müzik ile çalışıyorum ve yeni EP’m için stüdyodayım. Prodüktör, klip ekibi ve sahne işbirliklerine açığım.',
+   stats:[{l:'Yayın',v:'2'},{l:'Sahne',v:'14'},{l:'Klip',v:'1'}],
+   badges:[{i:'check',t:'Doğrulanmış'},{i:'flame',t:'Yükselen'},{i:'note',t:'Playlist’te'},{i:'star',t:'Etiketli sanatçı'}],
+   portfolio:[
+     {type:'single',title:'Yandım Yandım',meta:'Fono Müzik · Tekli',year:'2026'},
+     {type:'single',title:'bardak sek',meta:'Fono Müzik · Tekli',year:'2026'},
+     {type:'clip',title:'bardak sek (Official Video)',meta:'Kadraj Video Yapım',year:'2026'},
+     {type:'live',title:'Blackbox Sahne',meta:'Solo konser · 400 kişi',year:'2025'},
+   ]},
+  {id:'a-kara',category:'artist',name:'Kara Orman',specialty:'Alternatif Rock',city:'Ankara',
+   metricLabel:'Takipçi',metricValue:'41K',verified:false,frame:'fire',banner:'stage',
+   followers:41000,following:180,tags:['Alternatif Rock','Grup (4)','Festival'],
+   bio:'Dört kişilik alternatif rock grubu; canlı performansları güçlü, festival sahnesi deneyimi yüksek.',
+   about:'2018’de Ankara’da kurulduk. Dört kişiyiz: gitar, bas, davul ve vokal.\n\nİki EP ve bir albüm çıkardık, üç yıldır yaz festivallerinde çalıyoruz. Turne ve sponsorluk tekliflerine açığız.',
+   stats:[{l:'Yayın',v:'3'},{l:'Sahne',v:'62'},{l:'Festival',v:'9'}],
+   badges:[{i:'flame',t:'Festival sahnesi'},{i:'users',t:'4 kişilik grup'},{i:'mic',t:'Canlı odaklı'}],
+   portfolio:[
+     {type:'ep',title:'Kuzey Rüzgarı',meta:'Bağımsız · Albüm',year:'2025'},
+     {type:'live',title:'Ankara Rock Festivali',meta:'Ana sahne · 6.000 kişi',year:'2025'},
+     {type:'ep',title:'Gölge Oyunu',meta:'Bağımsız · EP',year:'2023'},
+   ]},
+  {id:'a-selin',category:'artist',name:'Selin Ada',specialty:'Akustik / Şarkı Sözü',city:'Bursa',
+   metricLabel:'Takipçi',metricValue:'23K',verified:false,frame:'mint',banner:'forest',
+   followers:23000,following:410,tags:['Akustik','Solo','Kafe/Sahne'],
+   bio:'Küçük ölçekli akustik mekanlar için ideal, söz odaklı repertuvarıyla tanınan sanatçı.',
+   about:'Gitar ve sesle, sade düzenlemelerle çalışıyorum. Şarkılarımın merkezinde söz var.\n\nKüçük sahneler ve kafe konserleri benim alanım. Menajerlik görüşmelerine yeni yeni başlıyorum.',
+   stats:[{l:'Yayın',v:'5'},{l:'Sahne',v:'38'},{l:'Şarkı',v:'22'}],
+   badges:[{i:'mic',t:'Akustik'},{i:'note',t:'Söz yazarı'}],
+   portfolio:[
+     {type:'single',title:'Uzak Bir Oda',meta:'Bağımsız · Tekli',year:'2026'},
+     {type:'live',title:'Cezayir Sahne',meta:'Akustik gece · 150 kişi',year:'2025'},
+     {type:'ep',title:'Kısa Cümleler',meta:'Bağımsız · EP',year:'2024'},
+   ]},
+  {id:'a-toprak',category:'artist',name:'Toprak Kollektif',specialty:'Hip-Hop',city:'İstanbul',
+   metricLabel:'Takipçi',metricValue:'67K',verified:true,frame:'gold',banner:'sunset',
+   followers:67000,following:95,tags:['Hip-Hop','Grup (3)','EP yayında'],
+   bio:'Üç kişilik hip-hop kolektifi; "Toprak Ana" EP’si üç platformda da yayında.',
+   about:'Üç MC, tek kolektif. 2020’den beri birlikte üretiyoruz.\n\n"Toprak Ana" EP’miz tüm platformlarda yayında. Beat ve klip işbirlikleri için açığız.',
+   stats:[{l:'Yayın',v:'4'},{l:'Sahne',v:'27'},{l:'Klip',v:'2'}],
+   badges:[{i:'check',t:'Doğrulanmış'},{i:'users',t:'3 kişilik kolektif'},{i:'star',t:'EP yayında'}],
+   portfolio:[
+     {type:'ep',title:'Toprak Ana',meta:'Bağımsız · EP',year:'2026'},
+     {type:'clip',title:'Kök (Official Video)',meta:'Işık Film Prodüksiyon',year:'2025'},
+     {type:'live',title:'Blackbox Sahne',meta:'Hip-hop gecesi',year:'2025'},
+   ]},
+  {id:'dj-miran',category:'dj',name:'DJ Miran',specialty:'Techno / Elektronik',city:'İzmir',
+   metricLabel:'Takipçi',metricValue:'112K',verified:true,frame:'neon',banner:'ocean',
+   followers:112000,following:220,tags:['Techno','DJ Set','Gece kulübü'],
+   bio:'Gece kulübü ve açık hava etkinliklerinde düzenli set çalan, "Gece Frekansı" ile öne çıkan prodüktör-DJ.',
+   about:'On yıldır techno ve elektronik set çalıyorum, aynı zamanda kendi prodüksiyonlarımı yapıyorum.\n\nKulüp, açık hava ve marka etkinliklerinde çalıyorum. Rezidans ve festival tekliflerine açığım.',
+   stats:[{l:'Yayın',v:'9'},{l:'Set',v:'240+'},{l:'Kulüp',v:'18'}],
+   badges:[{i:'check',t:'Doğrulanmış'},{i:'flame',t:'Kulüp rezidansı'},{i:'disc',t:'Prodüktör'}],
+   portfolio:[
+     {type:'single',title:'Gece Frekansı',meta:'SoundLink · Tekli',year:'2026'},
+     {type:'live',title:'IF Performance Hall',meta:'Kapanış seti · 900 kişi',year:'2025'},
+     {type:'prod',title:'Karanlık Oda (Remix)',meta:'Remix prodüksiyon',year:'2025'},
+   ]},
+  {id:'m-onur',category:'manager',name:'Onur Kaya · Yön Ajans',specialty:'Sanatçı Menajerliği',city:'İstanbul',
+   metricLabel:'Portföy',metricValue:'4 sanatçı',verified:true,frame:'mono',banner:'indigo',
+   followers:8400,following:520,tags:['Menajerlik','Booking','Sponsorluk'],
+   bio:'Indie ve alternatif sahnede 6 yıllık menajerlik deneyimi; rezervasyon ve sponsorluk görüşmelerini uçtan uca yürütüyor.',
+   about:'Yön Ajans’ın kurucusuyum. Bağımsız sanatçıların kariyer planlaması, sahne rezervasyonu ve marka anlaşmalarını yönetiyorum.\n\nPortföyümde dört sanatçı var. Yeni sanatçı görüşmelerine seçici şekilde açığım.',
+   stats:[{l:'Sanatçı',v:'4'},{l:'Anlaşma',v:'31'},{l:'Yıl',v:'6'}],
+   badges:[{i:'check',t:'Doğrulanmış ajans'},{i:'deals',t:'31 anlaşma'},{i:'users',t:'4 sanatçı'}],
+   portfolio:[
+     {type:'campaign',title:'Fusion Enerji × Kara Orman',meta:'Sponsorluk müzakeresi',year:'2026'},
+     {type:'live',title:'5 Şehir Yaz Turnesi',meta:'Turne organizasyonu',year:'2025'},
+     {type:'other',title:'Selin Ada menajerlik anlaşması',meta:'Yeni portföy katılımı',year:'2026'},
+   ]},
+  {id:'v-blackbox',category:'venue',name:'Blackbox Sahne',specialty:'Canlı Müzik Kulübü',city:'Kadıköy, İstanbul',
+   metricLabel:'Kapasite',metricValue:'400 kişi',verified:true,frame:'vinyl',banner:'stage',
+   followers:31000,following:640,tags:['400 kapasite','Ses sistemi dahil','Haftalık program'],
+   bio:'Kadıköy’ün merkezi canlı müzik mekanı; haftada 3-4 gece aktif program uyguluyor.',
+   about:'Kadıköy’ün göbeğinde, 400 kişilik canlı müzik sahnesi. Haftada 3-4 gece program yapıyoruz.\n\nSahne, ışık ve ses sistemi dahil. Backline mevcut. Bağımsız sanatçılara açığız, başvuruları takvimden değerlendiriyoruz.',
+   stats:[{l:'Kapasite',v:'400'},{l:'Etkinlik',v:'180/yıl'},{l:'Yıl',v:'9'}],
+   badges:[{i:'check',t:'Doğrulanmış mekan'},{i:'mic',t:'Backline dahil'},{i:'star',t:'Haftalık program'}],
+   portfolio:[
+     {type:'live',title:'Lil Bey Solo Gecesi',meta:'22 Ağustos · Onaylandı',year:'2026'},
+     {type:'live',title:'Toprak Kollektif',meta:'Hip-hop gecesi · Dolu',year:'2025'},
+     {type:'live',title:'Perşembe Akustik Serisi',meta:'Haftalık program',year:'2025'},
+   ]},
+  {id:'v-jolly',category:'venue',name:'Jolly Joker Bostancı',specialty:'Konser Salonu',city:'İstanbul',
+   metricLabel:'Kapasite',metricValue:'1.200 kişi',verified:true,frame:'gold',banner:'indigo',
+   followers:96000,following:120,tags:['1200 kapasite','Büyük prodüksiyon'],
+   bio:'Büyük ölçekli konserler için tam donanımlı sahne ve ışık altyapısı.',
+   about:'1.200 kişilik konser salonu. Büyük prodüksiyonlar için tam donanımlı sahne, ışık ve ses altyapısı.\n\nBilet satışı ve prodüksiyon desteği sağlıyoruz.',
+   stats:[{l:'Kapasite',v:'1.200'},{l:'Etkinlik',v:'120/yıl'},{l:'Sahne',v:'2'}],
+   badges:[{i:'check',t:'Doğrulanmış mekan'},{i:'star',t:'Büyük prodüksiyon'}],
+   portfolio:[
+     {type:'live',title:'Kara Orman',meta:'5 Eylül · Talep değerlendiriliyor',year:'2026'},
+     {type:'live',title:'Kış Konserleri Serisi',meta:'8 konser',year:'2025'},
+   ]},
+  {id:'pr-basin',category:'pr',name:'Basın Ofisi Müzik',specialty:'Müzik PR Ajansı',city:'İstanbul',
+   metricLabel:'Portföy',metricValue:'15 sanatçı',verified:true,frame:'mono',banner:'indigo',
+   followers:12000,following:830,tags:['Basın Turu','Lansman','Medya İlişkileri'],
+   bio:'Albüm lansmanları ve basın turları için medya ilişkileri yürüten, müzik odaklı PR ajansı.',
+   about:'Sadece müzik sektörüne çalışan bir PR ajansıyız. Albüm lansmanları, basın turları ve medya ilişkilerini yönetiyoruz.\n\nPortföyümüzde 15 sanatçı var. Lansman öncesi 6 hafta çalışmayı tercih ediyoruz.',
+   stats:[{l:'Sanatçı',v:'15'},{l:'Lansman',v:'48'},{l:'Yıl',v:'7'}],
+   badges:[{i:'check',t:'Doğrulanmış ajans'},{i:'star',t:'48 lansman'}],
+   portfolio:[
+     {type:'press',title:'Lil Bey — "Yandım Yandım" lansmanı',meta:'Basın bülteni + 12 mecra',year:'2026'},
+     {type:'press',title:'Kara Orman röportaj turu',meta:'5 dergi · 3 podcast',year:'2025'},
+   ]},
+  {id:'p-kerem',category:'producer',name:'Kerem Beats',specialty:'Trap / Hip-Hop Beatmaker',city:'İstanbul',
+   metricLabel:'Uzmanlık',metricValue:'Beat üretimi',verified:false,frame:'fire',banner:'sunset',
+   followers:29000,following:260,tags:['Trap','Beatmaking','Mix hazır'],
+   bio:'Hip-hop ve trap projeleri için beat üreten, 40’tan fazla yayınlanmış prodüksiyona imza atmış beatmaker.',
+   about:'Trap ve hip-hop beat üretiyorum. 40’tan fazla yayınlanmış prodüksiyonum var.\n\nBeat satışı, özel sipariş prodüksiyon ve mix hizmeti veriyorum. Demolar için mesaj atabilirsin.',
+   stats:[{l:'Prodüksiyon',v:'40+'},{l:'Sanatçı',v:'18'},{l:'Yıl',v:'5'}],
+   badges:[{i:'disc',t:'40+ prodüksiyon'},{i:'flame',t:'Hızlı teslim'}],
+   portfolio:[
+     {type:'prod',title:'bardak sek',meta:'Lil Bey · Beat + prodüksiyon',year:'2026'},
+     {type:'prod',title:'Kök',meta:'Toprak Kollektif · Beat',year:'2025'},
+     {type:'other',title:'Trap Beat Paketi Vol.3',meta:'12 beat · Lisanslı',year:'2025'},
+   ]},
+  {id:'pl-indie',category:'playlist',name:'Yeni Türkçe İndie',specialty:'Editoryal Playlist',city:'Spotify',
+   metricLabel:'Takipçi',metricValue:'62K',verified:true,frame:'aurora',banner:'forest',
+   followers:62000,following:75,tags:['İndie','Haftalık güncelleme','Editoryal'],
+   bio:'Yeni çıkan Türkçe indie ve pop prodüksiyonları haftalık güncellenen bir akışta bir araya getiren editoryal playlist.',
+   about:'Her cuma güncellenen editoryal bir playlist. Yeni çıkan Türkçe indie ve pop prodüksiyonlarını takip ediyoruz.\n\nGönderilen her demoyu dinliyoruz; playlist başvuruları için mesaj kutusu açık.',
+   stats:[{l:'Şarkı',v:'85'},{l:'Güncelleme',v:'Haftalık'},{l:'Yıl',v:'4'}],
+   badges:[{i:'check',t:'Doğrulanmış küratör'},{i:'note',t:'Haftalık güncelleme'},{i:'star',t:'62K takipçi'}],
+   portfolio:[
+     {type:'other',title:'Ağustos Derlemesi',meta:'22 şarkı · Haftalık akış',year:'2026'},
+     {type:'other',title:'Yılın Çıkışları 2025',meta:'40 şarkı · Özel derleme',year:'2025'},
+   ]},
+  {id:'i-bora',category:'instrumentalist',name:'Bora Kemancı',specialty:'Keman',city:'İstanbul',
+   metricLabel:'Oturum Ücreti',metricValue:'₺3.500/gün',verified:false,frame:'mint',banner:'ocean',
+   followers:7600,following:390,tags:['Keman','Stüdyo','Canlı sahne'],
+   bio:'Stüdyo kayıtları ve canlı performanslar için oturum kemancısı; klasik ve pop repertuvara hakim.',
+   about:'Oturum kemancısıyım. Klasik eğitim aldım, pop ve alternatif projelerde çalışıyorum.\n\nStüdyo kaydı, canlı sahne ve turne için müsaitim. Günlük ücretle çalışıyorum.',
+   stats:[{l:'Oturum',v:'120+'},{l:'Sanatçı',v:'34'},{l:'Yıl',v:'11'}],
+   badges:[{i:'mic',t:'Oturum müzisyeni'},{i:'star',t:'11 yıl deneyim'}],
+   portfolio:[
+     {type:'prod',title:'Yandım Yandım',meta:'Lil Bey · Yaylı kayıt',year:'2026'},
+     {type:'live',title:'Kış Konserleri',meta:'Turne · 8 şehir',year:'2025'},
+   ]},
+  {id:'vid-kadraj',category:'video',name:'Kadraj Video Yapım',specialty:'Klip Prodüksiyonu',city:'İzmir',
+   metricLabel:'Portföy',metricValue:'40+ klip',verified:true,frame:'holo',banner:'neonlight',
+   followers:44000,following:310,tags:['Müzik Videosu','Sosyal İçerik','Renk Grade'],
+   bio:'Müzik videosu ve RGB tüp ışıklı gece çekimleri üreten prodüksiyon ekibi.',
+   about:'Müzik videosu ve sosyal medya içeriği üreten bir prodüksiyon ekibiyiz.\n\n40’tan fazla klip çektik. Konsept, çekim, kurgu ve renk düzenlemesi bize ait. Gece çekimleri ve ışık tasarımı uzmanlığımız.',
+   stats:[{l:'Klip',v:'40+'},{l:'Sanatçı',v:'26'},{l:'Yıl',v:'6'}],
+   badges:[{i:'check',t:'Doğrulanmış stüdyo'},{i:'video',t:'40+ klip'},{i:'flame',t:'Gece çekimi'}],
+   portfolio:[
+     {type:'clip',title:'bardak sek',meta:'Lil Bey · Official Video',year:'2026'},
+     {type:'clip',title:'Kök',meta:'Toprak Kollektif · Official Video',year:'2025'},
+     {type:'other',title:'Sosyal İçerik Paketi',meta:'12 dikey video',year:'2025'},
+   ]},
+];
+
+const EXTRA_PROFILES = [
+  {id:'x-fono',category:'distributor',name:'Fono Müzik',specialty:'Plak Şirketi / Distribütör',city:'İstanbul',
+   metricLabel:'Sanatçı',metricValue:'28',verified:true,frame:'gold',banner:'indigo',
+   followers:54000,following:210,tags:['Dağıtım','Yapım','Royalti'],
+   bio:'Bağımsız sanatçılara dağıtım, yapım ve royalti raporlama hizmeti veren plak şirketi.',
+   about:'Bağımsız sanatçılara dağıtım ve yapım desteği veriyoruz. Spotify, Apple Music ve YouTube Music dahil tüm büyük platformlara dağıtım yapıyoruz.\n\nRoyalti raporlaması aylık, ödeme takibi platform üzerinden şeffaf.',
+   stats:[{l:'Sanatçı',v:'28'},{l:'Yayın',v:'340'},{l:'Yıl',v:'12'}],
+   badges:[{i:'check',t:'Doğrulanmış distribütör'},{i:'upload',t:'340 yayın'},{i:'star',t:'Content ID'}],
+   portfolio:[
+     {type:'single',title:'Yandım Yandım',meta:'Lil Bey · Dağıtım',year:'2026'},
+     {type:'single',title:'bardak sek',meta:'Lil Bey · Dağıtım + yapım',year:'2026'},
+     {type:'other',title:'Ağustos Royalti Raporu',meta:'28 sanatçı',year:'2026'},
+   ]},
+  {id:'x-fusion',category:'advertiser',name:'Fusion Enerji',specialty:'Marka / Reklamcı',city:'İstanbul',
+   metricLabel:'Kampanya',metricValue:'2 aktif',verified:true,frame:'fire',banner:'sunset',
+   followers:210000,following:64,tags:['Sponsorluk','Festival','Marka İşbirliği'],
+   bio:'Müzik sahnesine sponsor olan, sanatçı işbirlikleriyle kampanya yürüten enerji içeceği markası.',
+   about:'Müzik sahnesini destekleyen bir markayız. Festival sponsorlukları ve sanatçı işbirlikleriyle kampanyalar yürütüyoruz.\n\nBu yaz 5 şehirde sahne turu sponsorluğumuz var. Indie ve alternatif sanatçılarla çalışmayı tercih ediyoruz.',
+   stats:[{l:'Kampanya',v:'2'},{l:'Sanatçı',v:'11'},{l:'Şehir',v:'5'}],
+   badges:[{i:'check',t:'Doğrulanmış marka'},{i:'campaigns',t:'2 aktif kampanya'},{i:'flame',t:'Festival sponsoru'}],
+   portfolio:[
+     {type:'campaign',title:'Yaz Sahne Turu',meta:'5 şehir · Teklif toplanıyor',year:'2026'},
+     {type:'campaign',title:'Yeni Nesil Sesler',meta:'Elektronik & hip-hop · Aktif',year:'2026'},
+   ]},
+];
+
+const PROFILES = {};
+[...LISTINGS, ...EXTRA_PROFILES].forEach(p => PROFILES[p.id] = p);
+
+/* ---- sosyal içerik ---- */
+let POSTS = [
+  {id:'p1',author:'a-lilbey',time:'2 saat önce',likes:842,comments:37,liked:false,
+   text:'“Yandım Yandım” bugün tüm platformlarda yayında 🔥\nStüdyoda geçen üç ayın sonucu. Dinleyip ne düşündüğünüzü yazın.',
+   attach:{type:'single',title:'Yandım Yandım',meta:'Fono Müzik · Tekli · 2026'}},
+  {id:'p2',author:'v-blackbox',time:'4 saat önce',likes:126,comments:19,liked:false,
+   text:'Cuma gecemiz boşaldı. Kendi kitlesi olan bir grup ya da solo sanatçı arıyoruz — kapı hasılatı paylaşımlı.\nBaşvurular ilanlar sekmesinde.'},
+  {id:'p3',author:'vid-kadraj',time:'6 saat önce',likes:394,comments:22,liked:true,
+   text:'Lil Bey — “bardak sek” klibi yayında. Gece çekimi, RGB tüp ışık, tek plan final sahnesi.',
+   attach:{type:'clip',title:'bardak sek (Official Video)',meta:'Klip prodüksiyon · 2026'}},
+  {id:'p4',author:'pl-indie',time:'Dün',likes:512,comments:44,liked:false,
+   text:'Ağustos derlemesi güncellendi 🎧 Bu hafta 6 yeni isim listede.\nDemo göndermek isteyenler mesaj kutusuna yazabilir.',
+   attach:{type:'other',title:'Yeni Türkçe İndie',meta:'85 şarkı · Haftalık güncelleme'}},
+  {id:'p5',author:'dj-miran',time:'Dün',likes:1204,comments:63,liked:false,
+   text:'30 Eylül IF Performance Hall kapanış seti bende. Bu sefer tamamen kendi prodüksiyonlarımdan bir set hazırlıyorum.',
+   attach:{type:'live',title:'IF Performance Hall',meta:'30 Eylül · Kapanış seti'}},
+  {id:'p6',author:'p-kerem',time:'2 gün önce',likes:288,comments:31,liked:false,
+   text:'Yeni beat paketi hazır. 12 parça, trap ve boom-bap ağırlıklı. Lisanslama için yazın.',
+   attach:{type:'other',title:'Trap Beat Paketi Vol.4',meta:'12 beat · Lisanslı'}},
+  {id:'p7',author:'a-kara',time:'2 gün önce',likes:467,comments:28,liked:false,
+   text:'Ankara Rock Festivali ana sahne kaydımız çıktı. 6.000 kişiye çaldığımız o geceyi unutmayacağız.',
+   attach:{type:'live',title:'Ankara Rock Festivali',meta:'Ana sahne · 6.000 kişi'}},
+  {id:'p8',author:'i-bora',time:'3 gün önce',likes:143,comments:11,liked:false,
+   text:'Bu hafta üç ayrı stüdyoda yaylı kayıt yaptım. Projesine keman düşünen varsa takvimim eylülde açık.'},
+  {id:'p9',author:'x-fono',time:'3 gün önce',likes:221,comments:14,liked:false,
+   text:'Ağustos royalti raporları 28 sanatçımız için hazır. Ödemeler cuma günü hesaplara geçecek.'},
+];
+
+const COMMENTS = {
+  p1:[
+    {author:'pl-indie',text:'Dinledik, harika olmuş. Bu hafta derlemeye ekliyoruz 🎧',time:'1 sa'},
+    {author:'p-kerem',text:'Mix çok temiz çıkmış, tebrikler.',time:'1 sa'},
+    {author:'v-blackbox',text:'Sahnede canlı dinlemek için sabırsızlanıyoruz.',time:'40 dk'},
+  ],
+  p2:[
+    {author:'a-selin',text:'İlgileniyorum, akustik bir set hazırlayabilirim.',time:'3 sa'},
+    {author:'m-onur',text:'Portföyümden bir grubu önerebilirim, mesaj atıyorum.',time:'2 sa'},
+    {author:'a-kara',text:'Tarih uygunsa biz de varız.',time:'2 sa'},
+    {author:'p-kerem',text:'Kapı hasılatı oranı nedir?',time:'1 sa'},
+  ],
+  p3:[
+    {author:'a-lilbey',text:'Ekip harikaydı, gece boyu çalıştık. Sonuç ortada 🔥',time:'5 sa'},
+    {author:'a-toprak',text:'Renk düzenlemesi çok iyi olmuş.',time:'4 sa'},
+  ],
+  p4:[
+    {author:'a-selin',text:'Demomu gönderdim, umarım beğenirsiniz.',time:'20 sa'},
+    {author:'a-kara',text:'Listede olmak istiyoruz, yeni albümü yolluyoruz.',time:'18 sa'},
+    {author:'p-kerem',text:'Bu haftaki seçkiyi çok beğendim.',time:'15 sa'},
+    {author:'i-bora',text:'Akustik ağırlıklı bir alt liste de güzel olurdu.',time:'12 sa'},
+  ],
+  p5:[
+    {author:'v-jolly',text:'Bizde de bir gece ayarlayalım mı?',time:'18 sa'},
+    {author:'x-fusion',text:'Bu seti sponsorlamak isteriz, konuşalım.',time:'16 sa'},
+  ],
+  p6:[
+    {author:'a-toprak',text:'Vol.3’ten iki beat almıştık, bu paketi de dinleyeceğiz.',time:'1 gün'},
+    {author:'a-lilbey',text:'Lisans şartlarını yazar mısın?',time:'22 sa'},
+    {author:'dj-miran',text:'Boom-bap olanları merak ettim.',time:'20 sa'},
+  ],
+  p7:[{author:'a-kara',text:'O gece bizim için unutulmazdı, teşekkürler Ankara.',time:'1 gün'}],
+  p8:[{author:'a-selin',text:'EP kaydım için yazacağım, takvimini ayır 🙂',time:'2 gün'}],
+  p9:[{author:'a-lilbey',text:'Rapor elime ulaştı, teşekkürler.',time:'2 gün'}],
+};
+
+let STORIES = [
+  {author:'a-lilbey',time:'2 sa',items:[
+    {bg:'linear-gradient(135deg,#A855F7,#EC4899,#22D3EE)',text:'Stüdyodayız 🎧\nYeni EP yolda'},
+    {bg:'linear-gradient(135deg,#4338CA,#0F172A)',text:'“Yandım Yandım” yayında'},
+  ]},
+  {author:'dj-miran',time:'4 sa',items:[
+    {bg:'linear-gradient(135deg,#0EA5E9,#0F766E)',text:'Bu gece açık hava\nSet 01:00’de'},
+  ]},
+  {author:'v-blackbox',time:'6 sa',items:[
+    {bg:'linear-gradient(180deg,#1F2937,#111827)',text:'Cuma gecesi boş\nBaşvurular açık'},
+  ]},
+  {author:'vid-kadraj',time:'8 sa',items:[
+    {bg:'linear-gradient(135deg,#EC4899,#BE185D)',text:'Set kuruldu 🎬\nGece çekimi başlıyor'},
+  ]},
+  {author:'pl-indie',time:'Dün',items:[
+    {bg:'linear-gradient(135deg,#34D399,#047857)',text:'85 şarkı\nAğustos derlemesi güncellendi'},
+  ]},
+];
+
+let ADS = [
+  {id:'ad1',author:'v-blackbox',kind:'seek',time:'2 saat önce',
+   title:'Cuma geceleri için rezidans DJ arıyoruz',
+   body:'Kadıköy’deki mekanımızda cuma geceleri çalacak, house ve disko ağırlıklı çalan bir DJ arıyoruz. Ekipman bizde, 4 saatlik set.',
+   city:'İstanbul', budget:'₺6.000 / gece', tags:['DJ','Rezidans','Haftalık']},
+  {id:'ad2',author:'dj-miran',kind:'offer',time:'5 saat önce',
+   title:'Kulübünüz veya etkinliğiniz için DJ’lik yapabilirim',
+   body:'Techno, house ve elektronik setler çalıyorum. Kendi ekipmanımla gelebilirim. Kulüp, açık hava ve marka etkinliklerinde 10 yıllık deneyim.',
+   city:'İzmir · Tüm Türkiye', budget:'₺12.000 / set', tags:['Techno','House','Ekipman dahil']},
+  {id:'ad3',author:'pl-indie',kind:'offer',time:'Dün',
+   title:'Şarkılarınızı playlistimize ekleyebiliriz',
+   body:'62 bin takipçili editoryal playlistimiz her cuma güncelleniyor. Türkçe indie ve pop prodüksiyonları değerlendiriyoruz. Gönderdiğiniz her demoyu dinliyoruz, ücret talep etmiyoruz.',
+   city:'Spotify', budget:'Ücretsiz değerlendirme', tags:['Playlist','İndie','Haftalık']},
+  {id:'ad4',author:'p-kerem',kind:'offer',time:'Dün',
+   title:'Projeniz için trap / hip-hop beat üretirim',
+   body:'Özel sipariş beat, mix ve master hizmeti veriyorum. 40’tan fazla yayınlanmış prodüksiyonum var. İlk taslak 3 gün içinde teslim.',
+   city:'İstanbul · Uzaktan', budget:'₺4.000’den başlayan', tags:['Beat','Mix','Hızlı teslim']},
+  {id:'ad5',author:'m-onur',kind:'seek',time:'2 gün önce',
+   title:'Portföyüme indie / alternatif sanatçı arıyorum',
+   body:'Yön Ajans olarak portföyümüze bir sanatçı daha almak istiyoruz. En az bir yayınlanmış işi olan, düzenli sahne alan sanatçılarla görüşüyoruz.',
+   city:'İstanbul', budget:'Komisyon bazlı', tags:['Menajerlik','İndie','Uzun vadeli']},
+  {id:'ad6',author:'a-selin',kind:'seek',time:'2 gün önce',
+   title:'Akustik EP’m için oturum kemancısı arıyorum',
+   body:'Dört parçalık akustik EP kaydı için yaylı düzenleme yapacak bir kemancı arıyorum. Kayıt İstanbul’da, iki günlük iş.',
+   city:'İstanbul', budget:'₺7.000 / 2 gün', tags:['Keman','Stüdyo','Kısa dönem']},
+  {id:'ad7',author:'vid-kadraj',kind:'offer',time:'3 gün önce',
+   title:'Müzik videosu ve sosyal içerik çekimi yapıyoruz',
+   body:'Konsept, çekim, kurgu ve renk düzenlemesi dahil klip prodüksiyonu. Gece çekimleri ve ışık tasarımı uzmanlığımız. Dikey sosyal içerik paketi de veriyoruz.',
+   city:'İzmir · Tüm Türkiye', budget:'₺25.000’den başlayan', tags:['Klip','Sosyal içerik','Renk grade']},
+  {id:'ad8',author:'v-jolly',kind:'seek',time:'4 gün önce',
+   title:'Kış konser serisi için açılış grubu arıyoruz',
+   body:'8 konserlik kış serimizde ana sanatçı öncesi 30 dakikalık açılış seti çalacak gruplar arıyoruz. Alternatif ve rock ağırlıklı.',
+   city:'İstanbul', budget:'₺15.000 / konser', tags:['Açılış','Rock','8 konser']},
+  {id:'ad9',author:'x-fusion',kind:'seek',time:'5 gün önce',
+   title:'Yaz Sahne Turu için 5 sanatçı arıyoruz',
+   body:'5 şehirde gerçekleşecek sahne turumuz için indie ve alternatif sanatçılarla çalışmak istiyoruz. Ulaşım ve konaklama bize ait.',
+   city:'5 şehir', budget:'₺450.000 toplam bütçe', tags:['Sponsorluk','Turne','Marka']},
+  {id:'ad10',author:'i-bora',kind:'offer',time:'6 gün önce',
+   title:'Stüdyo ve sahne için oturum kemancısı',
+   body:'Klasik eğitimli oturum kemancısıyım. Pop, alternatif ve caz projelerinde çalışıyorum. Uzaktan kayıt da gönderebilirim.',
+   city:'İstanbul · Uzaktan', budget:'₺3.500 / gün', tags:['Keman','Uzaktan kayıt','Turne']},
+];
+
+const CHATS = {
+  'x-fono':{time:'09:14', msgs:[
+    {from:'peer',text:'Günaydın! “Yandım Yandım” için YouTube Content ID onaylandı.',t:'09:12'},
+    {from:'peer',text:'Artık kanalındaki tüm kullanımlar takip ediliyor, royalti akışı başladı.',t:'09:12'},
+    {from:'me',text:'Harika haber, teşekkürler 🙏',t:'09:14'},
+  ]},
+  'x-fusion':{time:'Dün', msgs:[
+    {from:'peer',text:'Merhaba, Yaz Sahne Turu için ilk taslak bütçeyi ilettik.',t:'Dün 16:20'},
+    {from:'peer',text:'5 şehir, ulaşım ve konaklama bizde. Geri dönüşünüzü bekliyoruz.',t:'Dün 16:21'},
+  ]},
+  'v-blackbox':{time:'Pzt', msgs:[
+    {from:'peer',text:'22 Ağustos etkinliği için ses kontrolü saat 17:00’de.',t:'Pzt 11:03'},
+    {from:'me',text:'Not aldım, 16:30 gibi orada oluruz.',t:'Pzt 11:40'},
+    {from:'peer',text:'Süper, backline hazır olacak.',t:'Pzt 11:42'},
+  ]},
+};
+
+const CAMPAIGNS = [
+  {name:'Yaz Sahne Turu',brand:'Fusion Enerji',budget:'₺450.000',target:'İndie & alternatif sanatçılar · 5 şehir',status:'Teklif Toplanıyor',tone:'warning'},
+  {name:'Yeni Nesil Sesler',brand:'Vinylist Kulaklık',budget:'₺180.000',target:'Elektronik & hip-hop',status:'Aktif',tone:'success'},
+];
+const BOOKINGS = [
+  {day:'22',month:'Ağu',year:'2026',venue:'Blackbox Sahne',artist:'Lil Bey',status:'Onaylandı',tone:'success',amount:'₺45.000'},
+  {day:'05',month:'Eyl',year:'2026',venue:'Jolly Joker Bostancı',artist:'Kara Orman',status:'Talep Edildi',tone:'warning',amount:'₺60.000'},
+  {day:'30',month:'Eyl',year:'2026',venue:'IF Performance Hall',artist:'DJ Miran',status:'Görüşülüyor',tone:'warning',amount:'₺85.000'},
+];
+const DEALS = {
+  'Taslak':[{parties:'Selin Ada × Yön Ajans',type:'Menajerlik Sözleşmesi',tone:'warning'}],
+  'İmzalandı':[
+    {parties:'Lil Bey × Fono Müzik',type:'Dağıtım & Yapım Anlaşması',tone:'success'},
+    {parties:'DJ Miran × SoundLink',type:'Dağıtım Anlaşması',tone:'success'},
+  ],
+  'Tamamlandı':[{parties:'Toprak Kollektif × Blackbox Sahne',type:'Performans Anlaşması',tone:'info'}],
+};
+const RELEASES = [
+  {title:'bardak sek',artist:'Lil Bey',spotify:'Yayında',apple:'Yayında',youtube:'Yayında'},
+  {title:'Yandım Yandım',artist:'Lil Bey',spotify:'Yayında',apple:'Yayında',youtube:'İnceleniyor'},
+  {title:'Toprak Ana (EP)',artist:'Toprak Kollektif',spotify:'Yayında',apple:'Yayında',youtube:'Yayında'},
+];
+const DSP_TONE = {'Yayında':'success','İnceleniyor':'warning','Reddedildi':'critical'};
+const PAYMENTS = [
+  {date:'12 Ağu 2026',desc:'Spotify Stream Royalti',related:'Lil Bey',amount:2340,pos:true},
+  {date:'10 Ağu 2026',desc:'Rezervasyon Ödemesi',related:'Blackbox Sahne',amount:45000,pos:true},
+  {date:'8 Ağu 2026',desc:'Platform Komisyonu',related:'MSC',amount:1250,pos:false},
+];
+
+const ROLES = [
+  {id:'artist',label:'Sanatçı',profileId:'a-lilbey',
+   stats:[{label:'Aktif Rezervasyon',value:'1',icon:'bookings'},{label:'Bekleyen Anlaşma',value:'0',icon:'deals'},{label:'Bu Ay Royalti',value:'₺7.460',icon:'money'},{label:'Yayındaki Parça',value:'2/2',icon:'note'}],
+   activity:[{text:'Blackbox Sahne 22 Ağustos performansını onayladı.',time:'2 saat önce',icon:'bookings'},{text:'"Yandım Yandım" YouTube Music incelemesi devam ediyor.',time:'Dün',icon:'note'},{text:'Fono Müzik ile dağıtım anlaşması dijital olarak imzalandı.',time:'2 gün önce',icon:'pen'}]},
+  {id:'manager',label:'Menajer',profileId:'m-onur',
+   stats:[{label:'Yönetilen Sanatçı',value:'4',icon:'users'},{label:'Görüşmedeki Teklif',value:'3',icon:'deals'},{label:'Bu Ay Gelir',value:'₺248.000',icon:'money'},{label:'Bekleyen Sözleşme',value:'2',icon:'pen'}],
+   activity:[{text:'Kara Orman için Fusion Enerji sponsorluk teklifini müzakereye açtı.',time:'1 saat önce',icon:'deals'},{text:'Selin Ada menajerlik sözleşmesi taslağı hazırlandı.',time:'3 saat önce',icon:'pen'}]},
+  {id:'distributor',label:'Distribütör',profileId:'x-fono',
+   stats:[{label:'İşlenen Yükleme',value:'45',icon:'upload'},{label:'İnceleme Bekleyen',value:'3',icon:'note'},{label:'Dağıtılan Sanatçı',value:'28',icon:'users'},{label:'Raporlanan Royalti',value:'₺420.400',icon:'money'}],
+   activity:[{text:'Lil Bey - "bardak sek" tüm platformlarda yayına alındı.',time:'3 saat önce',icon:'upload'},{text:'Lil Bey - "Yandım Yandım" YouTube Content ID onayı tamamlandı.',time:'Dün',icon:'check'}]},
+  {id:'advertiser',label:'Marka / Reklamcı',profileId:'x-fusion',
+   stats:[{label:'Aktif Kampanya',value:'2',icon:'campaigns'},{label:'Gelen Teklif',value:'17',icon:'note'},{label:'Yaz Turu Bütçesi',value:'₺450.000',icon:'money'},{label:'Ort. Etkileşim',value:'%6,8',icon:'revenue'}],
+   activity:[{text:'"Yaz Sahne Turu" kampanyasına yeni sanatçı başvurusu geldi.',time:'40 dk önce',icon:'campaigns'},{text:'Kara Orman menajeriyle bütçe görüşmesi başladı.',time:'1 saat önce',icon:'deals'}]},
+  {id:'venue',label:'Mekan Sahibi',profileId:'v-blackbox',
+   stats:[{label:'Bu Ay Etkinlik',value:'3',icon:'bookings'},{label:'Doluluk Oranı',value:'%78',icon:'revenue'},{label:'Bekleyen Talep',value:'1',icon:'deals'},{label:'Bu Ay Gelir',value:'₺142.500',icon:'money'}],
+   activity:[{text:'Lil Bey 22 Ağustos rezervasyonu onaylandı.',time:'2 saat önce',icon:'bookings'},{text:'Kara Orman 5 Eylül talebi değerlendiriliyor.',time:'Dün',icon:'deals'}]},
+  {id:'dj',label:'DJ',profileId:'dj-miran',
+   stats:[{label:'Bu Ay Set',value:'4',icon:'bookings'},{label:'Bekleyen Talep',value:'2',icon:'deals'},{label:'Bu Ay Kazanç',value:'₺32.000',icon:'money'},{label:'Takipçi',value:'112K',icon:'users'}],
+   activity:[{text:'IF Performance Hall 30 Eylül set teklifini onayladı.',time:'1 saat önce',icon:'bookings'},{text:'"Gece Frekansları" playlistine eklendi.',time:'Dün',icon:'note'}]},
+  {id:'producer',label:'Prodüktör & Beatmaker',profileId:'p-kerem',
+   stats:[{label:'Aktif Prodüksiyon',value:'3',icon:'note'},{label:'Bekleyen Talep',value:'2',icon:'deals'},{label:'Bu Ay Kazanç',value:'₺18.500',icon:'money'},{label:'Teslim Edilen Beat',value:'12',icon:'upload'}],
+   activity:[{text:'Lil Bey için yeni beat teslim edildi.',time:'3 saat önce',icon:'upload'},{text:'"bardak sek" prodüksiyon kredisi onaylandı.',time:'2 gün önce',icon:'check'}]},
+  {id:'playlist',label:'Playlist Küratörü',profileId:'pl-indie',
+   stats:[{label:'Yönetilen Playlist',value:'3',icon:'note'},{label:'Track Başvurusu',value:'24',icon:'upload'},{label:'Bu Ay Eklenen',value:'9',icon:'check'},{label:'Toplam Takipçi',value:'127K',icon:'users'}],
+   activity:[{text:'"Yandım Yandım" (Lil Bey) playlistine eklendi.',time:'2 saat önce',icon:'upload'},{text:'Playlist takipçi sayısı bu ay %8 arttı.',time:'3 gün önce',icon:'revenue'}]},
+  {id:'pr',label:'PR Uzmanı',profileId:'pr-basin',
+   stats:[{label:'Yürütülen Kampanya',value:'5',icon:'campaigns'},{label:'Bekleyen Talep',value:'3',icon:'note'},{label:'Portföydeki Sanatçı',value:'15',icon:'users'},{label:'Bu Ay Medya Teması',value:'22',icon:'deals'}],
+   activity:[{text:'Lil Bey için lansman basın bülteni gönderildi.',time:'1 saat önce',icon:'upload'},{text:'Kara Orman röportaj talebi görüşülüyor.',time:'Dün',icon:'deals'}]},
+  {id:'instrumentalist',label:'Enstrümacı',profileId:'i-bora',
+   stats:[{label:'Bu Ay Oturum',value:'6',icon:'bookings'},{label:'Bekleyen Talep',value:'2',icon:'deals'},{label:'Bu Ay Kazanç',value:'₺16.800',icon:'money'},{label:'Çalıştığı Sanatçı',value:'4',icon:'users'}],
+   activity:[{text:'"Yandım Yandım" için keman kaydı tamamlandı.',time:'2 saat önce',icon:'check'},{text:'Toprak Kollektif stüdyo oturumu için teklif geldi.',time:'Dün',icon:'deals'}]},
+  {id:'video',label:'Klip & Video Yapımcısı',profileId:'vid-kadraj',
+   stats:[{label:'Aktif Prodüksiyon',value:'2',icon:'note'},{label:'Bekleyen Teklif',value:'4',icon:'deals'},{label:'Bu Ay Kazanç',value:'₺54.000',icon:'money'},{label:'Yayınlanan Klip',value:'40+',icon:'video'}],
+   activity:[{text:'Lil Bey "Yandım Yandım" klip çekimi planlandı.',time:'2 saat önce',icon:'bookings'},{text:'"bardak sek" lyric video yayına alındı.',time:'3 gün önce',icon:'upload'}]},
+];
+
+/* ---------------- durum ---------------- */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const svg = n => `<svg viewBox="0 0 24 24">${ICONS[n]}</svg>`;
+const initialsOf = n => n.split(/[\s·]+/).filter(Boolean).slice(0,2).map(w => w[0]).join('').toLocaleUpperCase('tr');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = n => n >= 1000 ? (n/1000).toFixed(n >= 10000 ? 0 : 1).replace('.',',') + 'K' : String(n);
+
+let activeCategory = 'all';
+let adFilter = 'all';
+let currentRole = 'artist';
+let currentView = 'feed';
+let viewingProfileId = null;
+let profileReturnView = 'profile';
+let peekedId = null;
+let openChatId = null;
+
+const USER = {frame:null, banner:null, accent:'indigo', bio:null, extraPortfolio:[], title:'none', avColor:'default', avPhoto:null};
+const FOLLOWING = new Set(['v-blackbox','x-fono','pl-indie']);
+const FOLLOWERS = new Set(['a-selin','p-kerem','vid-kadraj','v-blackbox','a-toprak','i-bora','pl-indie']);
+const APPLIED = new Set();
+const HIDDEN = new Set();      // kullanıcının sildiği içerikler
+const seenStories = new Set();
+const SETTINGS = {theme:'system', notifPost:true, notifMsg:true, notifAd:false, privateProfile:false, showCity:true};
+
+const baseProfile = () => PROFILES[ROLES.find(r => r.id === currentRole).profileId];
+const myProfile = () => {
+  const b = baseProfile();
+  return USER.name ? {...b, name: USER.name} : b;
+};
+const myId = () => ROLES.find(r => r.id === currentRole).profileId;
+const myFrame = () => USER.frame ?? myProfile().frame;
+const myBanner = () => USER.banner ?? myProfile().banner;
+const avColorStyle = id => {
+  const c = AV_COLORS.find(x => x.id === id);
+  return c && c.bg ? ` style="background:${c.bg};color:${c.fg};"` : '';
+};
+const myAvStyle = () => avColorStyle(USER.avColor);
+
+/* ---- görseller ---- */
+const PHOTOS = {};   // profileId -> {avatar, gallery:[], seeded}
+const photosOf = id => (PHOTOS[id] ??= {avatar:null, gallery:[], seeded:false});
+
+/* kullanıcı kaydırırken/dokunurken ağır üretim yapılmaz */
+let busyUntil = 0;
+const markBusy = () => { busyUntil = performance.now() + 260; };
+const isBusy = () => performance.now() < busyUntil;
+addEventListener('scroll', markBusy, {passive:true, capture:true});
+addEventListener('pointerdown', markBusy, {passive:true, capture:true});
+addEventListener('pointermove', markBusy, {passive:true, capture:true});
+
+/* galeri görselleri ilk görüntülemede, kare kare boşta zamanda üretilir */
+function ensureGallery(id, onEach){
+  const rec = photosOf(id);
+  if(rec.seeded) return rec;
+  rec.seeded = true;
+  rec.pending = 2 + (hashStr(id) % 4);
+  let k = 0;
+  const total = rec.pending;
+  const step = () => idle(dl => {
+    /* kare bütçesi yoksa üretimi ertele: kaydırma sırasında takılma olmaz */
+    if(isBusy() || (dl.timeRemaining && dl.timeRemaining() < 14)){ setTimeout(step, 120); return; }
+    rec.gallery.push(makeCover(id + ':' + k, 200));
+    (rec.seededFlags ??= []).push(true);
+    k++;
+    if(k >= total) rec.pending = 0;
+    onEach && onEach();
+    if(k < total) step();
+  });
+  step();
+  return rec;
+}
+
+function hashStr(s){ let h = 2166136261; for(let i=0;i<s.length;i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+function rngFrom(seed){ let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+
+function avGradient(id){
+  const h = hashStr(id) % 360;
+  return `linear-gradient(135deg, hsl(${h} 70% 52%), hsl(${(h + 55) % 360} 68% 36%))`;
+}
+
+/* soyut kapak görseli üretir (dış kaynak yok) */
+function makeCover(seedStr, size = 620){
+  const c = document.createElement('canvas');
+  c.width = c.height = size;
+  const x = c.getContext('2d', {alpha:false});
+  const rnd = rngFrom(hashStr(seedStr));
+  const h1 = Math.floor(rnd() * 360), h2 = (h1 + 45 + rnd() * 160) % 360;
+  const g = x.createLinearGradient(0, 0, size, size);
+  g.addColorStop(0, `hsl(${h1} 72% ${38 + rnd() * 14}%)`);
+  g.addColorStop(1, `hsl(${h2} 66% ${16 + rnd() * 12}%)`);
+  x.fillStyle = g; x.fillRect(0, 0, size, size);
+
+  for(let i = 0; i < 4; i++){
+    x.beginPath();
+    x.arc(rnd() * size, rnd() * size, size * (0.14 + rnd() * 0.3), 0, Math.PI * 2);
+    x.fillStyle = `hsla(${(h1 + rnd() * 120) | 0} 85% ${55 + rnd() * 25}% / ${0.07 + rnd() * 0.13})`;
+    x.fill();
+  }
+  const bars = 22, bw = size / (bars * 1.7), base = size * 0.78;
+  for(let i = 0; i < bars; i++){
+    const bh = size * (0.05 + Math.abs(Math.sin(i * (0.5 + rnd() * 0.6))) * 0.24);
+    x.fillStyle = `hsla(0 0% 100% / ${0.13 + rnd() * 0.16})`;
+    x.fillRect(size * 0.09 + i * bw * 1.7, base - bh, bw, bh);
+  }
+  x.strokeStyle = 'hsla(0 0% 100% / .13)';
+  x.lineWidth = size * 0.012;
+  for(let r = 0.16; r < 0.4; r += 0.07){
+    x.beginPath(); x.arc(size * 0.74, size * 0.28, size * r, 0, Math.PI * 2); x.stroke();
+  }
+  /* ucuz grain: piksel döngüsü yerine birkaç yüz küçük dikdörtgen */
+  const grains = Math.round(size * 0.5);
+  for(let i = 0; i < grains; i++){
+    x.fillStyle = `hsla(0 0% ${rnd() < .5 ? 0 : 100}% / .05)`;
+    x.fillRect(rnd() * size, rnd() * size, 2, 2);
+  }
+  return c.toDataURL('image/jpeg', 0.78);
+}
+
+/* cihazdan fotoğraf seç + küçült */
+function pickImage(cb){
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.addEventListener('change', () => {
+    const f = inp.files && inp.files[0];
+    if(!f) return;
+    const fr = new FileReader();
+    fr.onload = () => {
+      const im = new Image();
+      im.onload = () => {
+        const max = 1100;
+        const sc = Math.min(1, max / Math.max(im.width, im.height));
+        const c = document.createElement('canvas');
+        c.width = Math.round(im.width * sc); c.height = Math.round(im.height * sc);
+        c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+        cb(c.toDataURL('image/jpeg', 0.85));
+      };
+      im.onerror = () => showToast('Bu görsel açılamadı.');
+      im.src = fr.result;
+    };
+    fr.onerror = () => showToast('Dosya okunamadı.');
+    fr.readAsDataURL(f);
+  });
+  inp.click();
+}
+
+function avInner(p, cls = ''){
+  const mine = p.id === myId();
+  const photo = mine ? (USER.avPhoto ?? photosOf(p.id).avatar) : photosOf(p.id).avatar;
+  if(photo) return `<span class="av ${cls}"><img src="${photo}" alt=""></span>`;
+  const st = (mine && USER.avColor !== 'default')
+    ? avColorStyle(USER.avColor)
+    : ` style="background:${avGradient(p.id)};color:#fff;"`;
+  return `<span class="av ${cls}"${st}>${initialsP(p)}</span>`;
+}
+
+function paintAv(el, p){
+  const mine = p.id === myId();
+  const photo = mine ? (USER.avPhoto ?? photosOf(p.id).avatar) : photosOf(p.id).avatar;
+  if(photo){ el.innerHTML = `<img src="${photo}" alt="">`; el.removeAttribute('style'); return; }
+  el.textContent = initialsP(p);
+  const c = AV_COLORS.find(x => x.id === USER.avColor);
+  if(mine && c && c.bg) el.setAttribute('style', `background:${c.bg};color:${c.fg};`);
+  else el.setAttribute('style', `background:${avGradient(p.id)};color:#fff;`);
+}
+
+/* kendi profilin için özelleştirilmiş adı her yerde uygula */
+const dispName = p => (p && p.id === myId() && USER.name) ? USER.name : (p ? p.name : '');
+const initialsP = p => initialsOf(dispName(p));
+
+/* göreli zaman: kalıcı veriyle birlikte "az önce" donup kalmasın */
+function timeLabel(o){
+  if(!o || !o.ts) return (o && o.time) || '';
+  const d = Date.now() - o.ts;
+  if(d < 60e3) return 'az önce';
+  if(d < 3600e3) return Math.floor(d/60e3) + ' dk önce';
+  if(d < 86400e3) return Math.floor(d/3600e3) + ' saat önce';
+  if(d < 7*86400e3) return Math.floor(d/86400e3) + ' gün önce';
+  return new Date(o.ts).toLocaleDateString('tr-TR', {day:'numeric', month:'short'});
+}
+function shortTime(o){
+  if(!o || !o.ts) return (o && o.time) || '';
+  const d = Date.now() - o.ts;
+  if(d < 60e3) return 'şimdi';
+  if(d < 3600e3) return Math.floor(d/60e3) + ' dk';
+  if(d < 86400e3) return Math.floor(d/3600e3) + ' sa';
+  return Math.floor(d/86400e3) + ' g';
+}
+const avatarHTML = (p, cls = '') => {
+  const frame = p.id === myId() ? myFrame() : p.frame;
+  return `<span class="fr fr-${frame}">${avInner(p, cls)}</span>`;
+};
+
+/* ---------------- gezinme ---------------- */
+function renderTabs(){
+  $('#tabbar').innerHTML = TABS.map(t => `
+    <button class="tab" data-view="${t.id}" aria-current="${t.id === 'feed' ? 'page' : 'false'}">
+      <span class="tab-ico">${svg(t.icon)}${t.id === 'messages' ? '<span class="tab-badge" id="msgBadge"></span>' : ''}</span>
+      <span>${t.label}</span>
+    </button>`).join('');
+  updateMsgBadge();
+}
+
+function updateMsgBadge(){
+  const n = Object.values(CHATS).filter(c => !c.read).length;
+  const b = $('#msgBadge');
+  if(!b) return;
+  b.textContent = n;
+  b.hidden = n === 0;
+}
+
+function renderMoreMenu(){
+  const item = (id, icon, label, desc, attr) => `
+    <button class="menu-item" ${attr}="${id}">
+      <span class="m-ico">${svg(icon)}</span>
+      <span><span style="display:block;">${label}</span>
+      <span style="display:block;font-size:12px;font-weight:500;color:var(--muted);">${desc}</span></span>
+      <span class="chev">${svg('chevron')}</span>
+    </button>`;
+  $('#moreMenu').innerHTML =
+    SUB_VIEWS.map(v => item(v.id, v.icon, v.label, v.desc, 'data-view')).join('')
+    + item('settings', 'gear', 'Ayarlar', 'Görünüm, bildirim ve gizlilik', 'data-sheet');
+}
+
+function showView(id, opts = {}){
+  if(id === 'profile' && !opts.keepProfile) viewingProfileId = null;
+  currentView = id;
+  $$('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + id));
+
+  const isSub = SUB_VIEWS.some(v => v.id === id);
+  const tabTarget = isSub ? 'profile' : id;
+  $$('.tab').forEach(t => t.setAttribute('aria-current', t.dataset.view === tabTarget ? 'page' : 'false'));
+
+  const viewingOther = id === 'profile' && viewingProfileId;
+  $('#viewTitle').textContent = viewingOther ? dispName(PROFILES[viewingProfileId]) : VIEW_TITLE[id];
+  $('#backBtn').hidden = !(isSub || viewingOther);
+
+  $('#camBtn').hidden = id !== 'feed';
+
+  const act = $('#actionBtn');
+  if(id === 'ads'){ act.hidden = false; act.innerHTML = svg('plus'); act.dataset.act = 'ad'; }
+  else if(id === 'profile' && !viewingProfileId){ act.hidden = false; act.innerHTML = svg('gear'); act.dataset.act = 'edit'; }
+  else act.hidden = true;
+
+  if(id === 'profile') renderProfile();
+  $('#scrollArea').scrollTop = 0;
+}
+
+function goBack(){
+  if(currentView === 'profile' && viewingProfileId){
+    viewingProfileId = null;
+    showView(profileReturnView === 'profile' ? 'profile' : profileReturnView);
+  } else showView('profile');
+}
+
+/* ---------------- akış ---------------- */
+function expireStories(){
+  const now = Date.now(), DAY = 86400e3;
+  let changed = false;
+  STORIES.forEach(s => {
+    const before = s.items.length;
+    s.items = s.items.filter(i => !i.ts || now - i.ts < DAY);
+    if(s.items.length !== before) changed = true;
+  });
+  const kept = STORIES.filter(s => s.items.length);
+  if(kept.length !== STORIES.length){ STORIES = kept; changed = true; }
+  if(changed) saveState();
+}
+
+function renderStories(){
+  expireStories();
+  const me = myProfile();
+  const mine = STORIES.find(s => s.author === myId());
+  const others = STORIES.filter(s => s.author !== myId());
+  const myBtn = `
+    <button class="story-btn" data-story="me">
+      <span class="story-ring ${mine ? '' : 'mine'}" style="position:relative;">
+        ${avInner(me)}
+        <span class="story-add">+</span>
+      </span>
+      <span class="story-name">Story’in</span>
+    </button>`;
+  $('#storyStrip').innerHTML = myBtn + others.map(s => {
+    const p = PROFILES[s.author];
+    return `<button class="story-btn" data-story="${s.author}">
+      <span class="story-ring ${seenStories.has(s.author) ? 'seen' : ''}">${avInner(p)}</span>
+      <span class="story-name">${dispName(p)}</span>
+    </button>`;
+  }).join('');
+}
+
+function renderPosts(){
+  $('#postList').innerHTML = POSTS.length
+    ? POSTS.map(postHTML).join('')
+    : `<p class="empty">Akış boş.<br>Sağa kaydırıp ilk paylaşımını yap.</p>`;
+}
+
+function postHTML(po){
+  const p = PROFILES[po.author];
+  const at = po.attach ? (PORT_TYPES[po.attach.type] ?? PORT_TYPES.other) : null;
+  return `<article class="post" data-post="${po.id}">
+    <div class="post-head">
+      <button class="story-btn" data-open-profile="${po.author}" style="width:auto;">${avatarHTML(p)}</button>
+      <div class="post-who">
+        <div class="post-name">${dispName(p)}${p.verified ? '<span class="verified">' + svg('check') + '</span>' : ''}</div>
+        <div class="post-sub">${CATEGORY_LABEL[p.category] ?? p.specialty} · ${timeLabel(po)}</div>
+      </div>
+      ${po.author === myId() ? `<button class="post-del" data-delpost="${po.id}" aria-label="Paylaşımı sil">${svg('trash')}</button>` : ''}
+    </div>
+    ${po.text ? `<div class="post-text">${esc(po.text)}</div>` : ''}
+    ${po.photo ? `<img class="post-photo" src="${po.photo}" alt="Paylaşım fotoğrafı" data-photo="${po.id}" role="button" tabindex="0" loading="lazy" decoding="async">` : ''}
+    ${at ? `<div class="post-attach">
+      <span class="post-cover" style="background:${at.css}">${svg(at.icon)}</span>
+      <div style="min-width:0;">
+        <div class="port-type">${at.label}</div>
+        <div class="port-title">${esc(po.attach.title)}</div>
+        <div class="port-meta">${esc(po.attach.meta)}</div>
+      </div></div>` : ''}
+    <div class="post-actions">
+      <button class="act ${po.liked ? 'on' : ''}" data-like="${po.id}">${svg('heart')}<span>${po.likes}</span></button>
+      <button class="act" data-comment="${po.id}">${svg('comment')}<span>${(COMMENTS[po.id] || []).length}</span></button>
+      <button class="act" data-share="${po.id}">${svg('share')}<span>Paylaş</span></button>
+    </div>
+  </article>`;
+}
+
+/* ---------------- story görüntüleyici ---------------- */
+let svGroup = null, svIndex = 0, svTimer = null;
+
+function openStory(authorId){
+  const g = STORIES.find(s => s.author === authorId);
+  if(!g) return;
+  svGroup = g; svIndex = 0;
+  $('#storyViewer').classList.add('open');
+  pushOverlay(doCloseStory);
+  paintStory();
+}
+
+function paintStory(){
+  const g = svGroup, it = g.items[svIndex], p = PROFILES[g.author];
+  $('#svBars').innerHTML = g.items.map((_,i) =>
+    `<span class="sv-bar ${i < svIndex ? 'done' : ''} ${i === svIndex ? 'active' : ''}"><i></i></span>`).join('');
+  paintAv($('#svAvatar'), p);
+  $('#svName').textContent = dispName(p);
+  $('#svTime').textContent = g.ts ? shortTime(g) : g.time;
+  if(it.photo){
+    $('#svStage').style.background = `#000 center/contain no-repeat url("${it.photo}")`;
+  } else {
+    $('#svStage').style.background = it.bg;
+  }
+  $('#svText').textContent = it.text ?? '';
+  $('#svText').style.background = it.photo && it.text ? 'rgba(0,0,0,.45)' : 'none';
+  $('#svText').style.padding = it.photo && it.text ? '14px 18px' : '0';
+  $('#svText').style.borderRadius = '16px';
+  clearTimeout(svTimer);
+  svTimer = setTimeout(nextStory, 5000);
+}
+
+function nextStory(){
+  if(!svGroup) return;
+  if(svIndex < svGroup.items.length - 1){ svIndex++; paintStory(); }
+  else {
+    seenStories.add(svGroup.author);
+    const idx = STORIES.findIndex(s => s.author === svGroup.author);
+    const rest = STORIES.slice(idx + 1).filter(s => s.author !== myId());
+    if(rest.length){ svGroup = rest[0]; svIndex = 0; paintStory(); }
+    else closeStory();
+  }
+}
+
+function prevStory(){
+  if(svIndex > 0){ svIndex--; paintStory(); }
+}
+
+function closeStory(){
+  if(!navSuppress && requestBack()) return;
+  doCloseStory();
+}
+function doCloseStory(){
+  clearTimeout(svTimer);
+  if(svGroup) seenStories.add(svGroup.author);
+  svGroup = null;
+  $('#storyViewer').classList.remove('open');
+  renderStories();
+}
+
+/* ---------------- ilanlar ---------------- */
+function renderAdChips(){
+  const opts = [
+    {id:'all', label:'Tümü', n:ADS.length},
+    {id:'seek', label:'Arıyorum', n:ADS.filter(a => a.kind === 'seek').length},
+    {id:'offer', label:'Sunuyorum', n:ADS.filter(a => a.kind === 'offer').length},
+  ];
+  $('#adChips').innerHTML = opts.map(o =>
+    `<button class="chip" data-adfilter="${o.id}" aria-pressed="${o.id === adFilter}">${o.label} · ${o.n}</button>`).join('');
+}
+
+function renderAds(){
+  const list = ADS.filter(a => adFilter === 'all' || a.kind === adFilter);
+  $('#adList').innerHTML = list.map(a => {
+    const p = PROFILES[a.author];
+    const mine = a.author === myId();
+    const done = APPLIED.has(a.id);
+    return `<article class="ad">
+      <div class="ad-top">
+        <button class="story-btn" data-open-profile="${a.author}" style="width:auto;">${avatarHTML(p)}</button>
+        <div style="flex:1;min-width:0;">
+          <div class="post-name" style="font-size:13.5px;">${dispName(p)}</div>
+          <div class="post-sub">${a.city} · ${timeLabel(a)}</div>
+        </div>
+        <span class="ad-kind ${a.kind === 'seek' ? 'kind-seek' : 'kind-offer'}">${a.kind === 'seek' ? 'ARIYOR' : 'SUNUYOR'}</span>
+      </div>
+      <div class="ad-title">${esc(a.title)}</div>
+      <div class="ad-body">${esc(a.body)}</div>
+      <div class="ad-meta">${a.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+      <div class="ad-foot">
+        <span class="ad-price">${esc(a.budget)}<small>${a.kind === 'seek' ? 'Bütçe' : 'Ücret'}</small></span>
+        ${mine ? `<button class="btn-sm" data-delad="${a.id}" style="background:var(--surface-2);color:var(--critical);">İlanı sil</button>`
+               : `<button class="btn-sm ${done ? 'done' : ''}" data-apply="${a.id}" ${done ? 'disabled' : ''}>${done ? 'Gönderildi' : (a.kind === 'seek' ? 'Başvur' : 'Teklif al')}</button>`}
+      </div>
+    </article>`;
+  }).join('') || `<p class="empty">Bu filtrede ilan yok.<br>Sağ üstteki + ile kendi ilanını verebilirsin.</p>`;
+}
+
+/* ---------------- profil ---------------- */
+function renderProfile(){
+  const isOwn = !viewingProfileId;
+  const p = isOwn ? myProfile() : PROFILES[viewingProfileId];
+  const role = ROLES.find(r => r.id === currentRole);
+  const frame = isOwn ? myFrame() : p.frame;
+  const banner = isOwn ? myBanner() : p.banner;
+  const bio = isOwn ? (USER.bio ?? p.about) : p.about;
+  const isFollowing = FOLLOWING.has(p.id);
+
+  $('#proBanner').style.background = BANNERS[banner].css;
+  $('#proFrame').className = 'fr fr-' + frame;
+  paintAv($('#proAvatar'), p);
+  $('#proName').textContent = p.name;
+  $('#proVerified').hidden = !p.verified;
+  $('#proRole').innerHTML = `${isOwn ? role.label : (CATEGORY_LABEL[p.category] ?? p.specialty)}${SETTINGS.showCity || !isOwn ? ' · ' + p.city : ''}`
+    + (isOwn && USER.title !== 'none'
+        ? `<span class="title-pill" style="margin-left:0;display:flex;width:max-content;">${svg(TITLE_BY_ID[USER.title].icon)}${TITLE_BY_ID[USER.title].label}</span>`
+        : '');
+
+  const followerCount = (isOwn ? FOLLOWERS.size + p.followers : p.followers + (isFollowing ? 1 : 0));
+  const followingCount = isOwn ? FOLLOWING.size + p.following : p.following;
+  $('#proFollowRow').innerHTML = `
+    <button class="count-btn" data-people="followers"><b>${fmt(followerCount)}</b> <span>takipçi</span></button>
+    <button class="count-btn" data-people="following"><b>${fmt(followingCount)}</b> <span>takip</span></button>`;
+
+  $('#proStats').innerHTML = p.stats.map(s =>
+    `<div class="pro-stat"><div class="v num">${s.v}</div><div class="l">${s.l}</div></div>`).join('');
+
+  $('#proActions').innerHTML = isOwn
+    ? `<button class="btn" id="addContentBtn">İçerik ekle</button>
+       <button class="btn btn-ghost" id="customizeBtn">Özelleştir</button>`
+    : `<button class="btn ${isFollowing ? 'btn-ghost' : ''}" id="followBtn">${isFollowing ? 'Takiptesin' : 'Takip et'}</button>
+       <button class="btn btn-ghost" id="msgBtn">Mesaj gönder</button>`;
+
+  $('#proBio').textContent = bio;
+  $('#proBadges').innerHTML = p.badges.map(b => `<span class="badge">${svg(b.i)}${b.t}</span>`).join('');
+
+  const galleryOwner = p.id;
+  ensureGallery(galleryOwner, () => {
+    if(currentView === 'profile' && (viewingProfileId ?? myId()) === galleryOwner) paintGallery(p, isOwn);
+  });
+  paintGallery(p, isOwn);
+
+  const posts = POSTS.filter(x => x.author === p.id);
+  $('#proPostCount').textContent = `${posts.length} paylaşım`;
+  $('#proPosts').innerHTML = posts.length
+    ? posts.map(postHTML).join('')
+    : '<p class="empty" style="padding:20px 10px;">Henüz paylaşım yok.</p>';
+
+  const items = isOwn ? [...USER.extraPortfolio, ...p.portfolio] : p.portfolio;
+  $('#proPortCount').textContent = `${items.length} içerik`;
+  $('#proPortfolio').innerHTML = items.map(it => {
+    const t = PORT_TYPES[it.type] ?? PORT_TYPES.other;
+    const own = isOwn && USER.extraPortfolio.includes(it);
+    return `<div class="port-item">
+      <span class="port-cover" style="background:${t.css}">${svg(t.icon)}</span>
+      <div class="port-body">
+        <span class="port-type">${t.label}</span>
+        <div class="port-title">${esc(it.title)}</div>
+        <div class="port-meta">${esc(it.meta)}${it.year ? ' · ' + esc(it.year) : ''}</div>
+      </div>
+      ${own ? `<button class="port-del" data-delport="${USER.extraPortfolio.indexOf(it)}" aria-label="Portföyden kaldır">${svg('trash')}</button>` : ''}
+    </div>`;
+  }).join('');
+
+  $('#proOwnerZone').hidden = !isOwn;
+}
+
+function paintGallery(p, isOwn){
+  const rec = photosOf(p.id);
+  const gal = rec.gallery;
+  const pending = Math.max(0, (rec.pending || 0) - gal.length);
+  $('#proPhotoCount').textContent = pending ? 'yükleniyor…' : `${gal.length} fotoğraf`;
+  $('#proPhotos').innerHTML =
+    (isOwn ? `<button class="photo-tile photo-add" id="addPhotoBtn">${svg('camera')}<span>Ekle</span></button>` : '')
+    + gal.map((src,i) => `<button class="photo-tile" data-gallery="${i}" data-owner="${p.id}"><img src="${src}" alt="Fotoğraf ${i+1}" loading="lazy" decoding="async"></button>`).join('')
+    + '<span class="photo-tile skel"></span>'.repeat(pending)
+    + (!isOwn && !gal.length && !pending ? '<p class="empty" style="grid-column:1/-1;padding:18px 10px;">Henüz fotoğraf yok.</p>' : '');
+}
+
+function openProfile(id, fromView){
+  if(id === myId()){ showView('profile'); return; }
+  viewingProfileId = id;
+  profileReturnView = fromView ?? currentView;
+  showView('profile', {keepProfile:true});
+}
+
+function toggleFollow(id){
+  if(FOLLOWING.has(id)){ FOLLOWING.delete(id); showToast('Takipten çıkıldı.'); }
+  else { FOLLOWING.add(id); showToast(`${PROFILES[id].name} takip ediliyor.`); }
+  saveState();
+}
+
+/* ---------------- rol paneli ---------------- */
+function applyRole(id){
+  const role = ROLES.find(r => r.id === id);
+  $('#statGrid').innerHTML = role.stats.map(s => `
+    <div class="stat-card">
+      <span class="stat-icon">${svg(s.icon)}</span>
+      <div class="label">${s.label}</div>
+      <div class="value num">${s.value}</div>
+    </div>`).join('');
+  $('#activityList').innerHTML = role.activity.map(a => `
+    <div class="feed-row">
+      <span class="feed-icon">${svg(a.icon)}</span>
+      <div><div class="feed-text">${a.text}</div><div class="feed-time">${a.time}</div></div>
+    </div>`).join('');
+}
+
+/* ---------------- keşfet ---------------- */
+function renderChips(){
+  $('#chipRow').innerHTML = CATEGORIES.map(c => {
+    const n = c.id === 'all' ? LISTINGS.length : LISTINGS.filter(l => l.category === c.id).length;
+    return `<button class="chip" data-category="${c.id}" aria-pressed="${c.id === activeCategory}">${c.label} · ${n}</button>`;
+  }).join('');
+}
+
+function renderDiscovery(){
+  const q = $('#discoverySearch').value.trim().toLocaleLowerCase('tr');
+  const items = LISTINGS.filter(p => {
+    if(activeCategory !== 'all' && p.category !== activeCategory) return false;
+    if(!q) return true;
+    return (p.name + p.specialty + p.city).toLocaleLowerCase('tr').includes(q);
+  });
+  $('#discoveryGrid').innerHTML = items.length ? items.map(p => `
+    <button class="pcard" data-id="${p.id}">
+      ${avatarHTML(p)}
+      <span class="pcard-body">
+        <span class="kind">${CATEGORY_LABEL[p.category]}</span>
+        <span class="nm">${dispName(p)}${p.verified ? '<span class="verified">' + svg('check') + '</span>' : ''}</span>
+        <span class="meta">${p.specialty} · ${p.city}</span>
+        <span class="metric">${fmt(p.followers)} takipçi${FOLLOWING.has(p.id) ? ' · Takiptesin' : ''}</span>
+      </span>
+    </button>`).join('')
+    : '<p class="empty">Eşleşen sonuç bulunamadı.<br>Farklı bir kategori veya arama dene.</p>';
+}
+
+/* ---------------- mesajlar ---------------- */
+function renderThreads(){
+  const entries = Object.entries(CHATS);
+  if(!entries.length){
+    $('#threadList').innerHTML = '<p class="empty">Henüz mesajın yok.<br>Keşfet’ten birinin profiline girip mesaj gönder.</p>';
+    return;
+  }
+  $('#threadList').innerHTML = entries.map(([id,c]) => {
+    const p = PROFILES[id];
+    const last = c.msgs[c.msgs.length - 1];
+    const preview = last
+      ? `${last.from === 'me' ? 'Sen: ' : ''}${esc(last.text)}`
+      : 'Henüz mesaj yok';
+    return `<button class="thread" data-chat="${id}">
+      ${avatarHTML(p)}
+      <span class="thread-body">
+        <span class="thread-top"><span class="thread-name">${dispName(p)}</span><span class="thread-time">${c.ts ? shortTime(c) : c.time}</span></span>
+        <span class="thread-preview">${preview}</span>
+      </span>
+      ${c.read ? '' : '<span class="unread-dot"></span>'}
+    </button>`;
+  }).join('');
+}
+
+function openChat(id){
+  if(!CHATS[id]) CHATS[id] = {time:'Şimdi', msgs:[], read:true};
+  CHATS[id].read = true;
+  openChatId = id;
+  saveState();
+  const p = PROFILES[id];
+  $('#chatFrame').className = 'fr fr-' + p.frame;
+  paintAv($('#chatAvatar'), p);
+  $('#chatName').textContent = dispName(p);
+  $('#chatSub').textContent = `${CATEGORY_LABEL[p.category] ?? p.specialty} · ${p.city}`;
+  paintChat();
+  $('#chatScreen').classList.add('open');
+  pushOverlay(doCloseChat);
+  updateMsgBadge();
+  renderThreads();
+}
+
+function paintChat(){
+  const c = CHATS[openChatId];
+  $('#chatBody').innerHTML = c.msgs.length
+    ? c.msgs.map(m => `<div class="bubble ${m.from === 'me' ? 'b-me' : 'b-peer'}">${esc(m.text)}<span class="t">${m.t}</span></div>`).join('')
+    : '<p class="empty">Henüz mesaj yok.<br>İlk mesajı sen yaz.</p>';
+  $('#chatBody').scrollTop = $('#chatBody').scrollHeight;
+}
+
+function closeChat(){
+  if(!navSuppress && requestBack()) return;
+  doCloseChat();
+}
+function doCloseChat(){
+  $('#chatScreen').classList.remove('open');
+  openChatId = null;
+}
+
+/* ---------------- diğer görünümler ---------------- */
+function renderBookings(){
+  $('#bookingsList').innerHTML = BOOKINGS.map(b => `
+    <div class="info-card">
+      <div class="info-top">
+        <span class="date-chip"><span class="d num">${b.day}</span><span class="m">${b.month}</span></span>
+        <span style="flex:1;min-width:0;">
+          <span class="info-title" style="display:block;">${b.venue}</span>
+          <span class="info-sub" style="display:block;">${b.artist} · ${b.year}</span>
+        </span>
+        <span class="pill pill-${b.tone}">${b.status}</span>
+      </div>
+      <div class="info-foot">
+        <span style="font-size:12.5px;color:var(--muted);">Anlaşma bedeli</span>
+        <span class="info-amount num">${b.amount}</span>
+      </div>
+    </div>`).join('');
+}
+function renderDeals(){
+  $('#dealsList').innerHTML = Object.entries(DEALS).map(([status,list]) => `
+    <div style="margin-bottom:24px;">
+      <div class="sec-head"><h3>${status}</h3><span class="hint">${list.length} kayıt</span></div>
+      <div class="card-list">${list.map(d => `
+        <div class="info-card"><div class="info-top">
+          <span style="flex:1;min-width:0;">
+            <span class="info-title" style="display:block;">${d.parties}</span>
+            <span class="info-sub" style="display:block;">${d.type}</span>
+          </span>
+          <span class="pill pill-${d.tone}">${status}</span>
+        </div></div>`).join('')}</div>
+    </div>`).join('');
+}
+function renderCampaigns(){
+  $('#campaignList').innerHTML = CAMPAIGNS.map(c => `
+    <div class="info-card">
+      <div class="info-top">
+        <span style="flex:1;min-width:0;">
+          <span style="display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;">${c.brand}</span>
+          <span class="info-title" style="display:block;margin-top:2px;">${c.name}</span>
+          <span class="info-sub" style="display:block;">${c.target}</span>
+        </span>
+        <span class="pill pill-${c.tone}">${c.status}</span>
+      </div>
+      <div class="info-foot">
+        <span style="font-size:12.5px;color:var(--muted);">Bütçe</span>
+        <span class="info-amount num">${c.budget}</span>
+      </div>
+    </div>`).join('');
+}
+function renderRevenue(){
+  $('#releaseList').innerHTML = RELEASES.map(r => `
+    <div class="info-card">
+      <div class="info-title">${r.title}</div>
+      <div class="info-sub" style="margin-bottom:10px;">${r.artist}</div>
+      <div class="dsp-row"><span>Spotify</span><span class="pill pill-${DSP_TONE[r.spotify]}">${r.spotify}</span></div>
+      <div class="dsp-row"><span>Apple Music</span><span class="pill pill-${DSP_TONE[r.apple]}">${r.apple}</span></div>
+      <div class="dsp-row"><span>YouTube Music</span><span class="pill pill-${DSP_TONE[r.youtube]}">${r.youtube}</span></div>
+    </div>`).join('');
+  $('#paymentsList').innerHTML = PAYMENTS.map(p => `
+    <div class="pay-row">
+      <span style="min-width:0;">
+        <span style="display:block;font-weight:700;font-size:14px;">${p.desc}</span>
+        <span style="display:block;font-size:12px;color:var(--muted);margin-top:2px;">${p.related} · ${p.date}</span>
+      </span>
+      <span class="pay-amt num ${p.pos ? 'pay-pos' : 'pay-neg'}">${p.pos ? '+' : '−'}₺${p.amount.toLocaleString('tr-TR')}</span>
+    </div>`).join('');
+}
+
+/* ---------------- alt sayfalar ---------------- */
+let openSheetEl = null;
+function openSheet(el){
+  doCloseSheet();                 // katman değişimi: geçmişe yeni kayıt eklenmez
+  openSheetEl = el;
+  el.classList.add('open');
+  el.setAttribute('aria-hidden','false');
+  $('#backdrop').classList.add('open');
+  pushOverlay(doCloseSheet);
+}
+function closeSheet(){
+  if(!openSheetEl) return;
+  if(!navSuppress && requestBack()) return;
+  doCloseSheet();
+}
+function doCloseSheet(){
+  if(openSheetEl){
+    openSheetEl.classList.remove('open');
+    openSheetEl.setAttribute('aria-hidden','true');
+    openSheetEl = null;
+  }
+  $('#backdrop').classList.remove('open');
+}
+
+function openPeek(id){
+  const p = PROFILES[id];
+  if(!p) return;
+  peekedId = id;
+  $('#peekFrame').className = 'fr fr-' + p.frame;
+  paintAv($('#peekAvatar'), p);
+  $('#peekTitle').textContent = dispName(p);
+  $('#peekSub').textContent = `${CATEGORY_LABEL[p.category] ?? p.specialty} · ${fmt(p.followers)} takipçi`;
+  $('#peekTags').innerHTML = p.tags.map(t => `<span class="tag">${t}</span>`).join('');
+  $('#peekBio').textContent = p.bio;
+  $('#peekFollowBtn').textContent = FOLLOWING.has(id) ? 'Takiptesin' : 'Takip et';
+  $('#peekFollowBtn').classList.toggle('btn-ghost', FOLLOWING.has(id));
+  openSheet($('#peekSheet'));
+}
+
+function openCustomize(){
+  $('#editName').value = USER.name ?? baseProfile().name;
+  $('#editBio').value = USER.bio ?? myProfile().about;
+  renderPackOpts(); renderTitleOpts(); renderAvPhotoRow(); renderFrameOpts();
+  renderAvColorOpts(); renderBannerOpts(); renderAccentOpts();
+  openSheet($('#editSheet'));
+}
+function renderFrameOpts(){
+  const cur = myFrame();
+  $('#frameOpts').innerHTML = FRAMES.map(f => `
+    <button type="button" class="opt" data-frame="${f.id}" aria-pressed="${f.id === cur}">
+      <span class="fr fr-${f.id}">${avInner(baseProfile())}</span>
+      <span class="cap">${f.label}</span>
+    </button>`).join('');
+}
+function renderAvColorOpts(){
+  const me = myProfile();
+  $('#avColorOpts').innerHTML = AV_COLORS.map(c => {
+    const st = c.bg ? ` style="background:${c.bg};color:${c.fg};"` : ` style="background:${avGradient(me.id)};color:#fff;"`;
+    return `<button type="button" class="opt" data-avcolor="${c.id}" aria-pressed="${c.id === USER.avColor && !USER.avPhoto}">
+      <span class="fr fr-none"><span class="av"${st}>${initialsOf(me.name)}</span></span>
+      <span class="cap">${c.label}</span>
+    </button>`;
+  }).join('');
+}
+function renderAvPhotoRow(){
+  $('#avPhotoRow').innerHTML = USER.avPhoto
+    ? `<div class="pick-preview" style="width:96px;">
+         <img src="${USER.avPhoto}" alt="Profil fotoğrafı" style="height:96px;">
+         <button type="button" class="pick-remove" id="removeAvPhoto" aria-label="Kaldır">✕</button>
+       </div>`
+    : `<button type="button" class="pick-btn" id="pickAvPhoto">${svg('camera')}<span>Profil fotoğrafı yükle</span></button>`;
+}
+function renderTitleOpts(){
+  $('#titleOpts').innerHTML = TITLES.map(t => `
+    <button type="button" class="chip" data-title="${t.id}" aria-pressed="${t.id === USER.title}"
+      style="flex:none;">${t.label}</button>`).join('');
+}
+function renderPackOpts(){
+  const cur = PACKS.find(p => p.frame === myFrame() && p.banner === myBanner()
+    && p.accent === USER.accent && p.av === USER.avColor);
+  $('#packOpts').innerHTML = PACKS.map(p => `
+    <button type="button" class="pack" data-pack="${p.id}" aria-pressed="${cur && cur.id === p.id}">
+      <span class="pv" style="background:${BANNERS[p.banner].css};display:block;">
+        <span class="fr fr-${p.frame}"><span class="av"${avColorStyle(p.av)}>${initialsOf(myProfile().name)}</span></span>
+      </span>
+      <span class="pn" style="display:block;">${p.name}</span>
+      <span class="pd" style="display:block;">${p.desc}</span>
+    </button>`).join('');
+}
+function renderBannerOpts(){
+  const cur = myBanner();
+  $('#bannerOpts').innerHTML = Object.entries(BANNERS).map(([id,b]) => `
+    <button type="button" class="opt" data-banner="${id}" aria-pressed="${id === cur}">
+      <span class="opt-banner" style="background:${b.css}"></span><span class="cap">${b.label}</span>
+    </button>`).join('');
+}
+function renderAccentOpts(){
+  $('#accentOpts').innerHTML = ACCENTS.map(a => `
+    <button type="button" class="opt" data-accent="${a.id}" aria-pressed="${a.id === USER.accent}">
+      <span class="opt-accent" style="background:${a.hex}"></span><span class="cap">${a.label}</span>
+    </button>`).join('');
+}
+function applyAccent(id){
+  USER.accent = id;
+  const a = ACCENTS.find(x => x.id === id);
+  if(id === 'indigo') $('#device').style.removeProperty('--accent');
+  else $('#device').style.setProperty('--accent', a.hex);
+}
+function renderAddTypes(){
+  $('#addType').innerHTML = Object.entries(PORT_TYPES).map(([id,t]) => `<option value="${id}">${t.label}</option>`).join('');
+}
+
+/* ---- fotoğraf seçici alanları ---- */
+let draftPostPhoto = null, draftStoryPhoto = null;
+
+function renderPhotoSlot(slotId, photo, pickId, removeId, label){
+  $(slotId).innerHTML = photo
+    ? `<div class="pick-preview"><img src="${photo}" alt="Seçilen fotoğraf">
+         <button type="button" class="pick-remove" id="${removeId}" aria-label="Kaldır">✕</button></div>`
+    : `<button type="button" class="pick-btn" id="${pickId}">${svg('image')}<span>${label}</span></button>`;
+}
+const renderPostPhotoSlot = () =>
+  renderPhotoSlot('#postPhotoSlot', draftPostPhoto, 'pickPostPhoto', 'removePostPhoto', 'Fotoğraf ekle');
+const renderStoryPhotoSlot = () =>
+  renderPhotoSlot('#storyPhotoSlot', draftStoryPhoto, 'pickStoryPhoto', 'removeStoryPhoto', 'Fotoğraf ekle');
+
+/* ---- kalıcı depolama ----
+   Üretilen tohum görseller kaydedilmez (deterministik, açılışta yeniden üretilir);
+   yalnızca kullanıcının kendi verisi saklanır. */
+const STORE_KEY = 'msc:v1';
+let loggedIn = false;
+
+const canStore = (() => {
+  try{ localStorage.setItem('msc:t','1'); localStorage.removeItem('msc:t'); return true; }
+  catch(e){ return false; }
+})();
+
+const stripSeed = (obj, key) => {
+  const c = {...obj};
+  if(c.photoSeed){ delete c.photo; }
+  return c;
+};
+
+function collectState(){
+  const myPhotos = photosOf(myId());
+  return {
+    v:1, loggedIn, currentRole,
+    user: USER,
+    following:[...FOLLOWING], applied:[...APPLIED], hidden:[...HIDDEN],
+    settings: SETTINGS,
+    posts: POSTS.map(p => stripSeed(p)),
+    stories: STORIES.map(s => ({...s, items: s.items.map(i => i.photoSeed ? {...i, photo:undefined} : i)})),
+    ads: ADS,
+    comments: COMMENTS,
+    chats: CHATS,
+    myGallery: myPhotos.gallery.filter((_, i) => !myPhotos.seededFlags?.[i]),
+    myAvatar: myPhotos.avatar,
+  };
+}
+
+let saveTimer = null;
+function saveState(){
+  if(!canStore || !loggedIn) return;
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try{
+      localStorage.setItem(STORE_KEY, JSON.stringify(collectState()));
+    }catch(err){
+      /* kota doldu: en eski kullanıcı fotoğraflarını at, tekrar dene */
+      const g = photosOf(myId()).gallery;
+      if(g.length > 3){
+        g.splice(3);
+        try{ localStorage.setItem(STORE_KEY, JSON.stringify(collectState())); }catch(e2){}
+        showToast('Depolama doldu, en eski fotoğraflar kaldırıldı.');
+      }
+    }
+  }, 400);
+}
+
+function loadState(){
+  if(!canStore) return null;
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(!raw) return null;
+    const d = JSON.parse(raw);
+    return d && d.v === 1 ? d : null;
+  }catch(e){ return null; }
+}
+
+function clearState(){
+  try{ localStorage.removeItem(STORE_KEY); }catch(e){}
+}
+
+/* ---- donanım / tarayıcı geri tuşu ----
+   Açık bir katman varken geri tuşu uygulamadan çıkmak yerine katmanı kapatır. */
+let closeTop = null, navSuppress = false;
+
+function pushOverlay(fn){
+  try{
+    if(!closeTop) history.pushState({msc:true}, '');
+    closeTop = fn;
+  }catch(e){ closeTop = null; }   // pushState kullanılamıyorsa doğrudan kapatmaya düşeriz
+}
+function requestBack(){
+  if(!closeTop) return false;
+  history.back();                 // gerçek kapatmayı popstate yapar
+  return true;
+}
+window.addEventListener('popstate', () => {
+  if(!closeTop) return;
+  const fn = closeTop; closeTop = null;
+  navSuppress = true; fn(); navSuppress = false;
+});
+
+/* ---- kamera ---- */
+let camStream = null, camFacing = 'user', camMode = 'story', camShot = null;
+
+function setCamMode(m){
+  camMode = m;
+  $$('.cam-mode').forEach(b => b.setAttribute('aria-pressed', b.dataset.mode === m ? 'true' : 'false'));
+  $('#ccShare').textContent = m === 'story' ? 'Story’ne ekle' : 'Paylaş';
+}
+
+function refreshCamThumb(){
+  const g = photosOf(myId()).gallery;
+  $('#camGallery').innerHTML = g.length
+    ? `<img src="${g[0]}" alt="Son fotoğraf">`
+    : `<svg viewBox="0 0 24 24">${ICONS.image}</svg>`;
+}
+
+async function startCam(){
+  const v = $('#camVideo'), fb = $('#camFallback');
+  try{
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('yok');
+    camStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:camFacing}, audio:false});
+    v.srcObject = camStream;
+    v.classList.toggle('mirror', camFacing === 'user');
+    v.style.visibility = 'visible';
+    fb.classList.remove('on');
+    $('#camShutter').disabled = false;
+    $('#camShutter').style.opacity = '1';
+  }catch(err){
+    camStream = null;
+    v.style.visibility = 'hidden';
+    fb.classList.add('on');
+    $('#camShutter').disabled = true;
+    $('#camShutter').style.opacity = '.4';
+    if(err && err.name === 'NotAllowedError'){
+      $('#camFallbackTitle').textContent = 'Kamera izni verilmedi';
+      $('#camFallbackText').textContent = 'İzin verirsen buradan doğrudan çekebilirsin. Şimdilik galeriden fotoğraf seçebilirsin.';
+    }
+  }
+}
+
+function stopCam(){
+  if(camStream){ camStream.getTracks().forEach(t => t.stop()); camStream = null; }
+  $('#camVideo').srcObject = null;
+}
+
+function openCam(mode = 'story'){
+  if(openSheetEl) doCloseSheet();
+  setCamMode(mode);
+  refreshCamThumb();
+  $('#camCompose').classList.remove('on');
+  camShot = null;
+  $('#camScreen').classList.add('open');
+  pushOverlay(doCloseCam);
+  startCam();
+}
+
+function closeCam(){
+  if(!navSuppress && requestBack()) return;
+  doCloseCam();
+}
+function doCloseCam(){
+  stopCam();
+  $('#camScreen').classList.remove('open');
+  $('#camCompose').classList.remove('on');
+  camShot = null;
+  $('#ccCaption').value = '';
+}
+
+function shrinkImage(src, cb, max = 1100){
+  const im = new Image();
+  im.onload = () => {
+    const sc = Math.min(1, max / Math.max(im.width, im.height));
+    const c = document.createElement('canvas');
+    c.width = Math.round(im.width * sc); c.height = Math.round(im.height * sc);
+    c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+    cb(c.toDataURL('image/jpeg', 0.85));
+  };
+  im.src = src;
+}
+
+function captureFrame(){
+  const v = $('#camVideo');
+  const w = v.videoWidth, h = v.videoHeight;
+  if(!w || !h){ showToast('Kamera görüntüsü hazır değil.'); return; }
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  const x = c.getContext('2d');
+  if(camFacing === 'user'){ x.translate(w, 0); x.scale(-1, 1); }
+  x.drawImage(v, 0, 0, w, h);
+  shrinkImage(c.toDataURL('image/jpeg', 0.9), showCompose);
+}
+
+function showCompose(src){
+  camShot = src;
+  $('#ccImg').src = src;
+  $('#camCompose').classList.add('on');
+}
+
+function publishShot(){
+  if(!camShot) return;
+  const cap = $('#ccCaption').value.trim();
+  if(camMode === 'story'){
+    const item = {bg:Object.values(BANNERS)[0].css, text:cap, photo:camShot, ts:Date.now()};
+    const mine = STORIES.find(s => s.author === myId());
+    if(mine){ mine.items.push(item); mine.ts = Date.now(); }
+    else STORIES.unshift({author:myId(), ts:Date.now(), items:[item]});
+    renderStories();
+    showToast('Story’in paylaşıldı.');
+  } else {
+    POSTS.unshift({id:'p' + Date.now(), author:myId(), ts:Date.now(), likes:0, liked:false, text:cap, photo:camShot});
+    renderPosts();
+    showToast('Paylaşımın yayınlandı.');
+  }
+  photosOf(myId()).gallery.unshift(camShot);
+  (photosOf(myId()).seededFlags ??= []).unshift(false);
+  closeCam();
+  showView('feed');
+  saveState();
+}
+
+/* ---- lightbox ---- */
+let lightboxOwnIndex = -1;
+function openLightbox(src, ownIndex = -1){
+  lightboxOwnIndex = ownIndex;
+  $('#lightboxImg').src = src;
+  $('#lbDel').hidden = ownIndex < 0;
+  $('#lightbox').classList.add('open');
+  pushOverlay(doCloseLightbox);
+}
+function closeLightbox(){
+  if(!navSuppress && requestBack()) return;
+  doCloseLightbox();
+}
+function doCloseLightbox(){
+  $('#lightbox').classList.remove('open');
+  $('#lightboxImg').removeAttribute('src');
+}
+
+let storyBg = Object.values(BANNERS)[0].css;
+function renderStoryBgOpts(){
+  $('#storyBgOpts').innerHTML = Object.entries(BANNERS).map(([id,b]) => `
+    <button type="button" class="opt" data-storybg="${b.css}" aria-pressed="${b.css === storyBg}">
+      <span class="opt-banner" style="background:${b.css}"></span><span class="cap">${b.label}</span>
+    </button>`).join('');
+}
+
+/* ---- yorumlar ---- */
+let commentPostId = null;
+function openComments(postId){
+  commentPostId = postId;
+  if(!COMMENTS[postId]) COMMENTS[postId] = [];
+  paintComments();
+  openSheet($('#commentSheet'));
+}
+function paintComments(){
+  const list = COMMENTS[commentPostId] ?? [];
+  $('#commentTitle').textContent = `Yorumlar · ${list.length}`;
+  $('#commentList').innerHTML = list.length ? list.map(c => {
+    const p = PROFILES[c.author];
+    return `<div class="cmt">
+      <button class="count-btn" data-open-profile="${c.author}">${avatarHTML(p)}</button>
+      <div class="cmt-body">
+        <div class="cmt-name">${dispName(p)}${p.verified ? '<span class="verified">' + svg('check') + '</span>' : ''}</div>
+        <div class="cmt-text">${esc(c.text)}</div>
+        <div class="cmt-time">${timeLabel(c)}</div>
+      </div></div>`;
+  }).join('') : '<p class="empty">Henüz yorum yok.<br>İlk yorumu sen yaz.</p>';
+}
+
+/* ---- takipçi listesi ---- */
+function openPeople(kind){
+  const isOwn = !viewingProfileId;
+  const p = isOwn ? myProfile() : PROFILES[viewingProfileId];
+  let ids;
+  if(isOwn) ids = [...(kind === 'followers' ? FOLLOWERS : FOLLOWING)];
+  else {
+    /* her profil için sabit ve tekrarlanabilir bir liste (her açılışta değişmesin) */
+    const pool = Object.keys(PROFILES).filter(id => id !== p.id);
+    const rnd = rngFrom(hashStr(p.id + ':' + kind));
+    ids = pool.map(id => ({id, k:rnd()})).sort((a,b) => a.k - b.k)
+              .slice(0, kind === 'followers' ? 6 : 4).map(x => x.id);
+    if(kind === 'followers' && FOLLOWING.has(p.id) && !ids.includes(myId())) ids.unshift(myId());
+  }
+
+  $('#peopleTitle').textContent = kind === 'followers' ? 'Takipçiler' : 'Takip edilenler';
+  $('#peopleList').innerHTML = ids.length ? ids.map(id => {
+    const q = PROFILES[id]; if(!q) return '';
+    const f = FOLLOWING.has(id);
+    return `<div class="person-row">
+      <button class="count-btn" data-open-profile="${id}">${avatarHTML(q)}</button>
+      <div class="person-info">
+        <div class="person-name">${dispName(q)}${q.verified ? '<span class="verified">' + svg('check') + '</span>' : ''}</div>
+        <div class="person-sub">${CATEGORY_LABEL[q.category] ?? q.specialty} · ${fmt(q.followers)} takipçi</div>
+      </div>
+      ${id === myId() ? '' : `<button class="mini-btn ${f ? 'on' : ''}" data-followtoggle="${id}">${f ? 'Takiptesin' : 'Takip et'}</button>`}
+    </div>`;
+  }).join('') : '<p class="empty">Liste boş.</p>';
+  openSheet($('#peopleSheet'));
+}
+
+/* ---- ayarlar ---- */
+function applyTheme(mode){
+  SETTINGS.theme = mode;
+  const root = document.documentElement;
+  if(mode === 'system') delete root.dataset.theme;
+  else root.dataset.theme = mode;
+  $$('#themeSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.theme === mode ? 'true' : 'false'));
+}
+const NOTIF_ROWS = [
+  {key:'notifPost', lbl:'Yeni paylaşımlar', sub:'Takip ettiklerin paylaştığında bildir'},
+  {key:'notifMsg', lbl:'Mesajlar', sub:'Yeni mesaj geldiğinde bildir'},
+  {key:'notifAd', lbl:'İlan eşleşmeleri', sub:'Sana uygun ilan açıldığında bildir'},
+];
+const PRIVACY_ROWS = [
+  {key:'privateProfile', lbl:'Gizli profil', sub:'Profilini yalnızca takipçilerin görsün'},
+  {key:'showCity', lbl:'Şehri göster', sub:'Profilinde konumun görünsün'},
+];
+function renderSettingRows(){
+  const note = $('#storeNote');
+  if(note) note.textContent = canStore
+    ? 'Profilin, paylaşımların ve fotoğrafların bu cihazda saklanıyor. Sunucuya hiçbir şey gönderilmiyor.'
+    : 'Bu ortamda yerel depolama kapalı; veriler yalnızca sekme açık kaldığı sürece tutulur.';
+  const row = r => `<div class="switch-row">
+      <div><div class="lbl">${r.lbl}</div><div class="sub">${r.sub}</div></div>
+      <button class="switch" data-setting="${r.key}" aria-pressed="${SETTINGS[r.key]}" aria-label="${r.lbl}"></button>
+    </div>`;
+  $('#notifRows').innerHTML = NOTIF_ROWS.map(row).join('');
+  $('#privacyRows').innerHTML = PRIVACY_ROWS.map(row).join('');
+}
+
+function showToast(msg){
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._tm);
+  showToast._tm = setTimeout(() => t.classList.remove('show'), 2300);
+}
+
+/* ---------------- kimlik ---------------- */
+let selectedSignupRole = null;
+let currentAuthTab = 'login';
+
+function renderRoleGrid(){
+  $('#roleGrid').innerHTML = ROLES.map(r =>
+    `<button type="button" class="role-chip" data-role="${r.id}" aria-pressed="false">${r.label}</button>`).join('');
+}
+function setAuthTab(tab){
+  currentAuthTab = tab;
+  $$('.auth-tab').forEach(t => t.setAttribute('aria-pressed', t.dataset.tab === tab ? 'true' : 'false'));
+  $('#roleField').hidden = tab !== 'signup';
+  $('#authSubmit').textContent = tab === 'signup' ? 'Hesap Oluştur' : 'Giriş Yap';
+}
+function attemptAuth(){
+  if(currentAuthTab === 'signup'){
+    if(!selectedSignupRole){ showToast('Devam etmek için bir rol seç.'); return; }
+    currentRole = selectedSignupRole;
+    USER.frame = null; USER.banner = null; USER.bio = null; USER.name = null;
+    USER.extraPortfolio = []; USER.title = 'none'; USER.avColor = 'default'; USER.avPhoto = null;
+    applyAccent('indigo');
+    clearState();
+  }
+  enterApp();
+  saveState();
+}
+
+function enterApp(){
+  loggedIn = true;
+  applyRole(currentRole);
+  renderStories(); renderPosts(); renderDiscovery();
+  renderAdChips(); renderAds(); renderThreads();
+  showView('feed');
+  $('#authScreen').style.display = 'none';
+  $('#appRoot').style.display = 'flex';
+}
+
+function logout(){
+  doCloseSheet(); doCloseChat(); doCloseCam(); closeTop = null;
+  loggedIn = false;
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify({...collectState(), loggedIn:false})); }catch(e){}
+  $('#appRoot').style.display = 'none';
+  $('#authScreen').style.display = 'flex';
+  $('#authForm').reset();
+  selectedSignupRole = null;
+  $$('.role-chip').forEach(c => c.setAttribute('aria-pressed','false'));
+  setAuthTab('login');
+}
+
+/* kayıtlı oturumu geri yükle */
+function restoreState(){
+  const d = loadState();
+  if(!d) return false;
+  currentRole = d.currentRole || currentRole;
+  Object.assign(USER, d.user || {});
+  (d.following || []).forEach(x => FOLLOWING.add(x));
+  FOLLOWING.forEach(x => { if(!(d.following || []).includes(x)) FOLLOWING.delete(x); });
+  (d.applied || []).forEach(x => APPLIED.add(x));
+  (d.hidden || []).forEach(x => HIDDEN.add(x));
+  Object.assign(SETTINGS, d.settings || {});
+  if(Array.isArray(d.posts) && d.posts.length) POSTS = d.posts.filter(x => !HIDDEN.has(x.id));
+  if(Array.isArray(d.stories) && d.stories.length) STORIES = d.stories;
+  if(Array.isArray(d.ads) && d.ads.length) ADS = d.ads;
+  if(d.comments) Object.assign(COMMENTS, d.comments);
+  if(d.chats) Object.keys(d.chats).forEach(k => CHATS[k] = d.chats[k]);
+  const rec = photosOf(d.currentRole ? ROLES.find(r => r.id === d.currentRole).profileId : myId());
+  if(Array.isArray(d.myGallery) && d.myGallery.length){ rec.gallery = d.myGallery.slice(); rec.seeded = true; rec.seededFlags = []; }
+  if(d.myAvatar) rec.avatar = d.myAvatar;
+  applyAccent(USER.accent || 'indigo');
+  applyTheme(SETTINGS.theme || 'system');
+  renderSettingRows();
+  return !!d.loggedIn;
+}
+
+/* ---------------- başlat ---------------- */
+Object.values(CHATS).forEach(c => c.read = false);
+
+/* tohum görseller boşta zamanda, tek tek üretilir: açılış hiç bloke olmaz */
+const idle = window.requestIdleCallback || (fn => setTimeout(() => fn({timeRemaining:() => 8}), 1));
+const seedJobs = [
+  ...['p1','p3','p5','p7'].map(id => () => {
+    const po = POSTS.find(p => p.id === id);
+    if(po && !po.photo){ po.photo = makeCover('post:' + id, 560); po.photoSeed = true; }
+  }),
+  () => { const it = STORIES.find(s => s.author === 'a-lilbey')?.items[0];
+          if(it && !it.photo){ it.photo = makeCover('story:lilbey', 560); it.photoSeed = true; } },
+  () => { const it = STORIES.find(s => s.author === 'vid-kadraj')?.items[0];
+          if(it && !it.photo){ it.photo = makeCover('story:kadraj', 560); it.photoSeed = true; } },
+];
+function runSeedJobs(){
+  if(!seedJobs.length){ renderPosts(); return; }   // yalnızca kuyruk bitince tek yeniden çizim
+  idle(dl => {
+    if(isBusy() || (dl.timeRemaining && dl.timeRemaining() < 14)){ setTimeout(runSeedJobs, 120); return; }
+    do { seedJobs.shift()(); } while(seedJobs.length && dl.timeRemaining && dl.timeRemaining() > 10);
+    runSeedJobs();
+  });
+}
+
+const wasLoggedIn = restoreState();        // kayıtlı oturum varsa geri yükle
+
+renderTabs(); renderMoreMenu(); renderRoleGrid(); renderAddTypes(); renderStoryBgOpts(); renderSettingRows();
+renderPostPhotoSlot(); renderStoryPhotoSlot();
+setAuthTab('login'); applyRole(currentRole);
+renderStories(); renderPosts(); renderChips(); renderDiscovery();
+renderAdChips(); renderAds(); renderThreads();
+renderBookings(); renderDeals(); renderCampaigns(); renderRevenue();
+runSeedJobs();
+
+if(wasLoggedIn) enterApp();               // yenilemede oturum korunur
+
+$('#authTabs').addEventListener('click', e => {
+  const t = e.target.closest('.auth-tab'); if(t) setAuthTab(t.dataset.tab);
+});
+$('#roleGrid').addEventListener('click', e => {
+  const b = e.target.closest('.role-chip'); if(!b) return;
+  $$('.role-chip').forEach(c => c.setAttribute('aria-pressed','false'));
+  b.setAttribute('aria-pressed','true');
+  selectedSignupRole = b.dataset.role;
+});
+$('#googleBtn').addEventListener('click', attemptAuth);
+$('#appleBtn').addEventListener('click', attemptAuth);
+$('#authForm').addEventListener('submit', e => { e.preventDefault(); attemptAuth(); });
+$('#logoutBtn').addEventListener('click', logout);
+
+$('#tabbar').addEventListener('click', e => {
+  const t = e.target.closest('.tab'); if(t) showView(t.dataset.view);
+});
+$('#moreMenu').addEventListener('click', e => {
+  const i = e.target.closest('.menu-item'); if(!i) return;
+  if(i.dataset.sheet === 'settings'){ renderSettingRows(); openSheet($('#settingsSheet')); }
+  else if(i.dataset.view) showView(i.dataset.view);
+});
+$('#backBtn').addEventListener('click', goBack);
+$('#actionBtn').addEventListener('click', () => {
+  const a = $('#actionBtn').dataset.act;
+  if(a === 'ad') openSheet($('#adSheet'));
+  if(a === 'edit') openCustomize();
+});
+
+/* akış etkileşimleri */
+$('#storyStrip').addEventListener('click', e => {
+  const b = e.target.closest('.story-btn'); if(!b) return;
+  if(b.dataset.story !== 'me'){ openStory(b.dataset.story); return; }
+  const addTap = e.target.closest('.story-add');
+  const haveStory = STORIES.some(s => s.author === myId());
+  if(haveStory && !addTap) openStory(myId());
+  else openCam('story');
+});
+$('#postList').addEventListener('click', handlePostClick);
+$('#postList').addEventListener('keydown', handlePostClick);
+$('#proPosts').addEventListener('click', handlePostClick);
+$('#proPosts').addEventListener('keydown', handlePostClick);
+function handlePostClick(e){
+  if(e.type === 'keydown'){
+    if(e.key !== 'Enter' && e.key !== ' ') return;
+    const t = e.target.closest('[data-photo]');
+    if(!t) return;
+    e.preventDefault(); openLightbox(t.getAttribute('src')); return;
+  }
+  const ph = e.target.closest('[data-photo]');
+  if(ph){ openLightbox(ph.getAttribute('src')); return; }
+  const prof = e.target.closest('[data-open-profile]');
+  if(prof){ openProfile(prof.dataset.openProfile, currentView); return; }
+  const like = e.target.closest('[data-like]');
+  if(like){
+    const po = POSTS.find(p => p.id === like.dataset.like);
+    po.liked = !po.liked;
+    po.likes += po.liked ? 1 : -1;
+    /* tüm akışı yeniden çizmek yerine yalnızca ilgili butonları güncelle */
+    $$(`[data-like="${po.id}"]`).forEach(btn => {
+      btn.classList.toggle('on', po.liked);
+      btn.querySelector('span').textContent = po.likes;
+    });
+    saveState();
+    return;
+  }
+  const del = e.target.closest('[data-delpost]');
+  if(del){
+    const id = del.dataset.delpost;
+    POSTS = POSTS.filter(x => x.id !== id);
+    HIDDEN.add(id); delete COMMENTS[id];
+    renderPosts();
+    renderProfile();          // profil bölümündeki kopya da tazelensin
+    saveState(); showToast('Paylaşım silindi.');
+    return;
+  }
+  const cm = e.target.closest('[data-comment]');
+  if(cm){ openComments(cm.dataset.comment); return; }
+  const sh = e.target.closest('[data-share]');
+  if(sh){ showToast('Paylaşım bağlantısı kopyalandı.'); }
+}
+
+/* story görüntüleyici */
+$('#svNext').addEventListener('click', nextStory);
+$('#svPrev').addEventListener('click', prevStory);
+$('#svClose').addEventListener('click', closeStory);
+
+/* keşfet */
+$('#chipRow').addEventListener('click', e => {
+  const c = e.target.closest('.chip'); if(!c) return;
+  activeCategory = c.dataset.category;
+  renderChips(); renderDiscovery();
+});
+let searchTimer = null;
+$('#discoverySearch').addEventListener('input', () => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(renderDiscovery, 120);
+});
+$('#discoveryGrid').addEventListener('click', e => {
+  const card = e.target.closest('.pcard[data-id]');
+  if(card) openPeek(card.dataset.id);
+});
+$('#peekProfileBtn').addEventListener('click', () => {
+  const id = peekedId; closeSheet(); openProfile(id, 'discovery');
+});
+$('#peekFollowBtn').addEventListener('click', () => {
+  toggleFollow(peekedId);
+  $('#peekFollowBtn').textContent = FOLLOWING.has(peekedId) ? 'Takiptesin' : 'Takip et';
+  $('#peekFollowBtn').classList.toggle('btn-ghost', FOLLOWING.has(peekedId));
+  renderDiscovery();
+});
+
+/* ilanlar */
+$('#adChips').addEventListener('click', e => {
+  const c = e.target.closest('.chip'); if(!c) return;
+  adFilter = c.dataset.adfilter;
+  renderAdChips(); renderAds();
+});
+$('#adList').addEventListener('click', e => {
+  const prof = e.target.closest('[data-open-profile]');
+  if(prof){ openProfile(prof.dataset.openProfile, 'ads'); return; }
+  const dl = e.target.closest('[data-delad]');
+  if(dl){
+    ADS = ADS.filter(x => x.id !== dl.dataset.delad);
+    renderAdChips(); renderAds(); saveState(); showToast('İlan silindi.');
+    return;
+  }
+  const ap = e.target.closest('[data-apply]');
+  if(!ap) return;
+  const ad = ADS.find(a => a.id === ap.dataset.apply);
+  APPLIED.add(ad.id);
+  renderAds(); saveState();
+  showToast(ad.kind === 'seek' ? 'Başvurun iletildi.' : 'Teklif talebin gönderildi.');
+});
+$('#adKindSeg').addEventListener('click', e => {
+  const b = e.target.closest('button'); if(!b) return;
+  $$('#adKindSeg button').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+});
+$('#adForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const kind = $('#adKindSeg button[aria-pressed="true"]').dataset.kind;
+  ADS.unshift({
+    id:'ad' + Date.now(), author:myId(), kind, ts:Date.now(),
+    title:$('#adTitle').value.trim(),
+    body:$('#adBody').value.trim(),
+    city:$('#adCity').value.trim() || myProfile().city,
+    budget:$('#adBudget').value.trim() || 'Görüşülür',
+    tags:[kind === 'seek' ? 'Arıyorum' : 'Sunuyorum', myProfile().specialty.split(' / ')[0]],
+  });
+  $('#adForm').reset();
+  $$('#adKindSeg button').forEach((x,i) => x.setAttribute('aria-pressed', i === 0 ? 'true' : 'false'));
+  closeSheet(); renderAdChips(); renderAds(); showView('ads'); saveState();
+  showToast('İlanın yayınlandı.');
+});
+
+/* profil */
+$('#proPortfolio').addEventListener('click', e => {
+  const d = e.target.closest('[data-delport]'); if(!d) return;
+  USER.extraPortfolio.splice(+d.dataset.delport, 1);
+  renderProfile(); saveState(); showToast('Portföyden kaldırıldı.');
+});
+$('#proActions').addEventListener('click', e => {
+  const b = e.target.closest('button'); if(!b) return;
+  if(b.id === 'customizeBtn') openCustomize();
+  if(b.id === 'addContentBtn') openSheet($('#addSheet'));
+  if(b.id === 'followBtn'){ toggleFollow(viewingProfileId); renderProfile(); renderDiscovery(); }
+  if(b.id === 'msgBtn') openChat(viewingProfileId);
+});
+$('#proFollowRow').addEventListener('click', e => {
+  const b = e.target.closest('[data-people]');
+  if(b) openPeople(b.dataset.people);
+});
+$('#peopleList').addEventListener('click', e => {
+  const prof = e.target.closest('[data-open-profile]');
+  if(prof){ const id = prof.dataset.openProfile; closeSheet(); openProfile(id, currentView); return; }
+  const ft = e.target.closest('[data-followtoggle]');
+  if(!ft) return;
+  toggleFollow(ft.dataset.followtoggle);
+  const on = FOLLOWING.has(ft.dataset.followtoggle);
+  ft.textContent = on ? 'Takiptesin' : 'Takip et';
+  ft.classList.toggle('on', on);
+  renderDiscovery();
+});
+$('#commentList').addEventListener('click', e => {
+  const prof = e.target.closest('[data-open-profile]');
+  if(prof){ const id = prof.dataset.openProfile; closeSheet(); openProfile(id, currentView); }
+});
+$('#commentForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const v = $('#commentInput').value.trim(); if(!v || !commentPostId) return;
+  COMMENTS[commentPostId].push({author:myId(), text:v, ts:Date.now()});
+  $('#commentInput').value = '';
+  paintComments(); renderPosts();
+  if(currentView === 'profile') renderProfile();
+  $('#commentList').scrollTop = $('#commentList').scrollHeight;
+  saveState();
+});
+$('#clearDataBtn').addEventListener('click', () => {
+  clearState();
+  loggedIn = false;
+  location.reload();
+});
+$('#themeSeg').addEventListener('click', e => {
+  const b = e.target.closest('button'); if(b){ applyTheme(b.dataset.theme); saveState(); }
+});
+$('#settingsSheet').addEventListener('click', e => {
+  const s = e.target.closest('[data-setting]'); if(!s) return;
+  const k = s.dataset.setting;
+  SETTINGS[k] = !SETTINGS[k];
+  s.setAttribute('aria-pressed', SETTINGS[k]);
+  if(k === 'showCity' && currentView === 'profile') renderProfile();
+  saveState();
+});
+$('#titleOpts').addEventListener('click', e => {
+  const b = e.target.closest('[data-title]'); if(!b) return;
+  USER.title = b.dataset.title; renderTitleOpts();
+});
+$('#avColorOpts').addEventListener('click', e => {
+  const o = e.target.closest('.opt'); if(!o) return;
+  USER.avColor = o.dataset.avcolor;
+  renderAvColorOpts(); renderFrameOpts(); renderPackOpts();
+});
+$('#packOpts').addEventListener('click', e => {
+  const b = e.target.closest('[data-pack]'); if(!b) return;
+  const p = PACKS.find(x => x.id === b.dataset.pack);
+  USER.frame = p.frame; USER.banner = p.banner; USER.avColor = p.av;
+  applyAccent(p.accent);
+  renderPackOpts(); renderFrameOpts(); renderAvColorOpts(); renderBannerOpts(); renderAccentOpts();
+  showToast(`“${p.name}” teması uygulandı.`);
+});
+$('#frameOpts').addEventListener('click', e => {
+  const o = e.target.closest('.opt'); if(!o) return;
+  USER.frame = o.dataset.frame; renderFrameOpts(); renderPackOpts();
+});
+$('#bannerOpts').addEventListener('click', e => {
+  const o = e.target.closest('.opt'); if(!o) return;
+  USER.banner = o.dataset.banner; renderBannerOpts();
+});
+$('#accentOpts').addEventListener('click', e => {
+  const o = e.target.closest('.opt'); if(!o) return;
+  applyAccent(o.dataset.accent); renderAccentOpts();
+});
+$('#saveProfileBtn').addEventListener('click', () => {
+  const nm = $('#editName').value.trim();
+  USER.name = (nm && nm !== baseProfile().name) ? nm : null;
+  USER.bio = $('#editBio').value.trim() || null;
+  closeSheet(); renderStories(); renderPosts(); renderProfile(); renderThreads();
+  saveState();
+  showToast('Profil güncellendi.');
+});
+$('#addForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const title = $('#addTitle').value.trim(); if(!title) return;
+  USER.extraPortfolio.unshift({
+    type:$('#addType').value, title,
+    meta:$('#addMeta').value.trim() || 'Yeni paylaşım',
+    year:$('#addYear').value.trim(),
+  });
+  $('#addForm').reset(); closeSheet(); renderProfile(); saveState();
+  showToast('İçerik portföyüne eklendi.');
+});
+
+/* gönderi + story oluşturma */
+$('#postForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const text = $('#postText').value.trim();
+  if(!text && !draftPostPhoto){ showToast('Bir şeyler yaz ya da fotoğraf ekle.'); return; }
+  POSTS.unshift({id:'p' + Date.now(), author:myId(), ts:Date.now(), likes:0, liked:false, text, photo:draftPostPhoto});
+  draftPostPhoto = null;
+  $('#postForm').reset(); renderPostPhotoSlot();
+  closeSheet(); renderPosts(); showView('feed'); saveState();
+  showToast('Paylaşımın yayınlandı.');
+});
+/* kamera */
+$('#camBtn').addEventListener('click', () => openCam('story'));
+$('#camClose').addEventListener('click', closeCam);
+$('#camShutter').addEventListener('click', captureFrame);
+$('#camFlip').addEventListener('click', async () => {
+  camFacing = camFacing === 'user' ? 'environment' : 'user';
+  stopCam();
+  await startCam();
+});
+$('#camModes').addEventListener('click', e => {
+  const b = e.target.closest('.cam-mode'); if(b) setCamMode(b.dataset.mode);
+});
+$('#camGallery').addEventListener('click', () => pickImage(showCompose));
+$('#camTextMode').addEventListener('click', () => {
+  const mode = camMode;
+  doCloseCam();   // katman değişimi: geçmişe dokunma (history.back asenkron olduğu için)
+  if(mode === 'post'){ renderPostPhotoSlot(); openSheet($('#postSheet')); }
+  else { renderStoryBgOpts(); renderStoryPhotoSlot(); openSheet($('#storySheet')); }
+});
+$('#ccRetake').addEventListener('click', () => {
+  camShot = null; $('#ccCaption').value = '';
+  $('#camCompose').classList.remove('on');
+  if(!camStream) startCam();
+});
+$('#ccShare').addEventListener('click', publishShot);
+
+/* akışta sağa kaydırınca kamera açılır (Instagram gibi) */
+(() => {
+  let sx = 0, sy = 0, tracking = false;
+  const root = $('#appRoot');
+  const stop = () => { tracking = false; };
+  root.addEventListener('pointerdown', e => {
+    if(currentView !== 'feed' || openSheetEl || openChatId || svGroup) return;
+    if(e.target.closest('.story-strip, .chip-row, .opt-row, .pack-row, input, textarea')) return;
+    sx = e.clientX; sy = e.clientY; tracking = true;
+  }, {passive:true});
+  /* eşik aşılır aşılmaz tetikle: tarayıcı jesti iptal etse bile kaçırmayız */
+  root.addEventListener('pointermove', e => {
+    if(!tracking) return;
+    const dx = e.clientX - sx, dy = Math.abs(e.clientY - sy);
+    if(dy > 45){ stop(); return; }
+    if(dx > 70){ stop(); openCam('story'); }
+  }, {passive:true});
+  root.addEventListener('pointerup', stop, {passive:true});
+  root.addEventListener('pointercancel', stop, {passive:true});
+})();
+
+/* fotoğraf: profil galerisi */
+$('#proPhotos').addEventListener('click', e => {
+  if(e.target.closest('#addPhotoBtn')){
+    pickImage(src => {
+      photosOf(myId()).gallery.unshift(src);
+      (photosOf(myId()).seededFlags ??= []).unshift(false);
+      renderProfile(); saveState();
+      showToast('Fotoğraf profiline eklendi.');
+    });
+    return;
+  }
+  const tile = e.target.closest('[data-gallery]');
+  if(tile){
+    const owner = tile.dataset.owner, i = +tile.dataset.gallery;
+    openLightbox(photosOf(owner).gallery[i], owner === myId() ? i : -1);
+  }
+});
+$('#lbClose').addEventListener('click', closeLightbox);
+$('#lbDel').addEventListener('click', () => {
+  if(lightboxOwnIndex < 0) return;
+  const rec = photosOf(myId());
+  rec.gallery.splice(lightboxOwnIndex, 1);
+  rec.seededFlags?.splice(lightboxOwnIndex, 1);
+  closeLightbox();
+  if(currentView === 'profile') renderProfile();
+  saveState(); showToast('Fotoğraf silindi.');
+});
+$('#lightbox').addEventListener('click', e => { if(e.target.id === 'lightbox') closeLightbox(); });
+
+/* fotoğraf: gönderi + story + avatar */
+$('#postPhotoSlot').addEventListener('click', e => {
+  if(e.target.closest('#pickPostPhoto')) pickImage(src => { draftPostPhoto = src; renderPostPhotoSlot(); });
+  if(e.target.closest('#removePostPhoto')){ draftPostPhoto = null; renderPostPhotoSlot(); }
+});
+$('#storyPhotoSlot').addEventListener('click', e => {
+  if(e.target.closest('#pickStoryPhoto')) pickImage(src => { draftStoryPhoto = src; renderStoryPhotoSlot(); });
+  if(e.target.closest('#removeStoryPhoto')){ draftStoryPhoto = null; renderStoryPhotoSlot(); }
+});
+$('#avPhotoRow').addEventListener('click', e => {
+  if(e.target.closest('#pickAvPhoto')){
+    pickImage(src => {
+      USER.avPhoto = src;
+      renderAvPhotoRow(); renderFrameOpts(); renderAvColorOpts(); renderPackOpts();
+      renderStories(); renderPosts(); renderThreads(); saveState();
+    });
+  }
+  if(e.target.closest('#removeAvPhoto')){
+    USER.avPhoto = null;
+    renderAvPhotoRow(); renderFrameOpts(); renderAvColorOpts(); renderPackOpts();
+    renderStories(); renderPosts(); renderThreads(); saveState();
+  }
+});
+
+$('#storyBgOpts').addEventListener('click', e => {
+  const o = e.target.closest('.opt'); if(!o) return;
+  storyBg = o.dataset.storybg; renderStoryBgOpts();
+});
+$('#storyForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const text = $('#storyText').value.trim();
+  if(!text && !draftStoryPhoto){ showToast('Metin yaz ya da fotoğraf ekle.'); return; }
+  const item = {bg:storyBg, text, photo:draftStoryPhoto, ts:Date.now()};
+  const mine = STORIES.find(s => s.author === myId());
+  if(mine){ mine.items.push(item); mine.ts = Date.now(); }
+  else STORIES.unshift({author:myId(), ts:Date.now(), items:[item]});
+  draftStoryPhoto = null;
+  $('#storyForm').reset(); renderStoryPhotoSlot();
+  closeSheet(); renderStories(); saveState();
+  showToast('Story’in paylaşıldı.');
+});
+
+/* mesajlar */
+$('#threadList').addEventListener('click', e => {
+  const t = e.target.closest('[data-chat]'); if(t) openChat(t.dataset.chat);
+});
+$('#chatBack').addEventListener('click', closeChat);
+$('#composer').addEventListener('submit', e => {
+  e.preventDefault();
+  const v = $('#chatInput').value.trim(); if(!v || !openChatId) return;
+  const now = new Date();
+  const t = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  CHATS[openChatId].msgs.push({from:'me', text:v, t});
+  CHATS[openChatId].ts = Date.now();
+  $('#chatInput').value = '';
+  paintChat(); renderThreads(); saveState();
+});
+
+$('#backdrop').addEventListener('click', closeSheet);
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Escape') return;
+  if($('#lightbox').classList.contains('open')) closeLightbox();
+  else if($('#camScreen').classList.contains('open')) closeCam();
+  else if(svGroup) closeStory();
+  else if(openChatId) closeChat();
+  else closeSheet();
+});
+</script>
+
+<script>
+  if('serviceWorker' in navigator){
+    addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  }
+</script>
+</body>
+</html>

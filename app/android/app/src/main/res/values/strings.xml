@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">MSC Music</string>
+    <string name="title_activity_main">MSC Music</string>
+    <string name="package_name">cc.msc.music</string>
+    <string name="custom_url_scheme">cc.msc.music</string>
+</resources>
