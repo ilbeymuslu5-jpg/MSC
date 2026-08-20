@@ -1,2 +1,7 @@
 /build/*
 !/build/.npmkeep
+
+# Web varlıkları bilerek depoya dahil edilir:
+# Android Studio'da Node kurmadan doğrudan derlenebilsin diye.
+# Kaynak: app/src/app.html → `npm run sync` ile yeniden üretilir.
+!/src/main/assets/public/

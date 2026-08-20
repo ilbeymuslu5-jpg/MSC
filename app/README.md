@@ -6,7 +6,12 @@ ve tüm veriyi cihazda tutar.
 
 - **Paket adı:** `cc.msc.music`
 - **Sürüm:** 1.0.0 (versionCode 1)
-- **Hedef:** Android 6.0+ (minSdk 23), targetSdk Capacitor 6 varsayılanı (34)
+- **Hedef:** Android 7.0+ (minSdk 24) · targetSdk 36 (Android 16)
+- Capacitor 8.5 · Gradle 8.14.3 · Android Gradle Plugin 8.13.0 · JDK 21
+
+> **Android Studio ile derlemek istiyorsanız:** adım adım rehber
+> [`ANDROID-STUDIO.md`](ANDROID-STUDIO.md) dosyasındadır. Web varlıkları depoya
+> dahil edildiği için Node.js kurmadan doğrudan derleyebilirsiniz.
 
 ## Dizin yapısı
 
@@ -23,6 +28,8 @@ app/
 │  ├─ sw.js                ← çevrimdışı önbellek
 │  └─ icons/
 ├─ android/                ← Capacitor'ın ürettiği Android projesi
+│  └─ app/src/main/assets/public/  ← derlenmiş web varlıkları (depoda mevcut)
+├─ ANDROID-STUDIO.md       ← Android Studio ile derleme + Play Store rehberi
 ├─ resources/              ← ikon/splash kaynak görselleri
 └─ store/                  ← Play Store kaydı için hazır malzemeler
    ├─ listing-tr.md              ← başlık, açıklamalar, veri güvenliği cevapları
@@ -48,8 +55,10 @@ npx serve www
 
 ## Derleme
 
-> **Not:** Bu depoda derleme yapmak için Android SDK gerekir. Kurulu değilse
-> aşağıdaki **CI ile derleme** yöntemini kullanın — hiçbir yerel kurulum gerektirmez.
+> **Not:** Bu komutlar için Android SDK gerekir. Üç seçeneğiniz var:
+> 1. **Android Studio** — `app/android` klasörünü açın, [`ANDROID-STUDIO.md`](ANDROID-STUDIO.md)'yi izleyin (önerilen).
+> 2. Aşağıdaki komut satırı yöntemi (SDK kuruluysa).
+> 3. **CI ile derleme** — hiçbir yerel kurulum gerektirmez, aşağıya bakın.
 
 ```bash
 npm run assemble:debug    # test için APK

@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "cc.msc.music"
-    compileSdk rootProject.ext.compileSdkVersion
+    namespace = "cc.msc.music"
+    compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "cc.msc.music"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -13,10 +13,12 @@ android {
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
              // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
-            ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
-    // Yayın imzası: android/keystore.properties dosyasından okunur (repoya girmez).
+    // Yayın imzası: android/keystore.properties dosyasindan okunur (repoya girmez).
+    // Android Studio'nun "Generate Signed App Bundle" sihirbazini kullaniyorsaniz
+    // bu dosyaya gerek yoktur; sihirbaz imzayi kendisi uygular.
     def keystorePropsFile = rootProject.file("keystore.properties")
     def keystoreProps = new Properties()
     if (keystorePropsFile.exists()) {
@@ -39,9 +41,8 @@ android {
             if (keystorePropsFile.exists()) {
                 signingConfig signingConfigs.release
             }
-            // Kod küçültme varsayılan olarak kapalı: Capacitor köprüsü yansıma (reflection)
-            // kullanır ve küçültülmüş sürüm cihazda test edilmeden açılmamalıdır.
-            // Test ettikten sonra ikisini de true yapabilirsiniz.
+            // Kod kucultme kapali: Capacitor koprusu yansima kullanir,
+            // acmadan once cihazda test edin.
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -53,7 +54,7 @@ android {
     }
 
     bundle {
-        language { enableSplit = false }   // tek dil (tr) — dil bölmesi kapalı
+        language { enableSplit = false }
     }
 }
 
